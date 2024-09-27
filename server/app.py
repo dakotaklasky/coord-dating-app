@@ -14,13 +14,56 @@ from models import User,Like,Match,Preference
 
 @app.route('/')
 def index():
-    return '<h1>Project Server</h1>'
-
-# @app.route('/likes',['GET','POST'])
-# def likes():
-#     if request.method == 'GET':
+    return '<h1>Welcome!</h1>'
 
 
+#get match prospect
+    #return a user that current user has not yet liked
+@app.route('/<int:user_id>/new_match', methods=['GET'])
+def new_match(user_id):
+    #not sure where username will be stored
+    all_users = User.query.all()
+    prev_likes = Like.query.filter(Like.matcher_id == user_id).all()
+    prev_likes_ids = [p.matchee_id for p in prev_likes]
+    prev_likes_ids.append(user_id)
+    available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
+    #available_user_ids = [u.id for u in available_users]
+    #for now quering all users and returning first one but that will change
+    return available_users[0].to_dict(), 200
+
+@app.route('/<int:user_id>/like', methods = ['POST'])
+def user_like(user_id):
+    #post like data
+    #if a match is created add to match table
+    #if no match return nothing
+    #if match return match
+
+    data = request.get_json()
+    new_like = Like(matcher_id = user_id, matchee_id = data.get('matchee_id'), accepted = data.get('accepted'))
+    db.session.add(new_like)
+    db.session.commit()
+
+    #is it a match?
+    reciprocal_like = Like.query.filter(Like.matcher_id == data.get('matchee_id').filter(Like.matchee_id == data.get('matcher_id'))).first()
+    if reciprocal_like:
+        if reciprocal_like.accepted == 1:
+            #you found a match!
+            new_match = Match(matcher_id = data.get('matcher_id'), matchee_id = data.get('matchee_id'))
+            new_match_reciprocal = Match(matcher_id = data.get('matchee_id'), matchee_id = data.get('matcher_id'))
+            return new_match.to_dict(), 200
+    else:
+        return {}, 204
+
+@app.route('/<int:user_id>/matches', methods = ['GET'])
+#return all matches
+def user_matches(user_id):
+    all_matches = Match.query.filter(Match.matcher_id == user_id).all()
+    return [m.to_dict() for m in all_matches],200
+
+
+
+### test routes in postman
+#add filters
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
@@ -28,12 +71,4 @@ if __name__ == '__main__':
 
 
 
-#get match prospect
-    #return a user that current user has not yet liked
-
-# store the users vote on the person
-    #either like or dislike in like table
-    #check if a match is made - if it is add to match table and return to client that match was made
-
-#return all matches to client
 

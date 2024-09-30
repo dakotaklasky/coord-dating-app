@@ -49,13 +49,13 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False, unique=True)
     age = db.Column(db.Integer)
-    #image_url = db.Column(db.String)
+    image = db.Column(db.String)
     bio = db.Column(db.String)
 
     preferences = db.relationship('Preference',back_populates='user')
     likes = db.relationship('Like',foreign_keys=[Like.matcher_id],back_populates='matcher_user')
     matches = db.relationship('Match',foreign_keys=[Match.matcher_id],back_populates='matcher_user')
-    serialize_rules = ['-preferences.user','-likes','-matches']
+    serialize_rules = ['-preferences.user','-likes.matcher_user','-matches.matcher_user']
 
     matchee_likes = association_proxy('likes','matchee_user',creator=lambda matchee_user_obj: Like(matchee_user=matchee_user_obj))
     matchee_matches = association_proxy('matches','matchee_user',creator=lambda matchee_user_obj: Match(matchee_user=matchee_user_obj))

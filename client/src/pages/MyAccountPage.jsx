@@ -1,12 +1,11 @@
 import { useState } from 'react'
 
-
-function PlanDate() {
+function MyAccountPage() {
   return (
     <div>
-        Plan Date
+      My Account
     </div>
   )
 }
 
-export default PlanDate;
+export default MyAccountPage;

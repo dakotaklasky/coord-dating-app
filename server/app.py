@@ -14,7 +14,12 @@ from models import User,Like,Match,Preference
 
 @app.route('/')
 def index():
-    return '<h1>Welcome!</h1>'
+    return {"hello":'Welcome!'},200
+
+#return user data
+@app.route('/<int:user_id>', methods=['GET'])
+def user(user_id):
+    return User.query.filter(User.id == user_id).first().to_dict(), 200
 
 
 #get match prospect
@@ -29,7 +34,7 @@ def new_match(user_id):
     available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
     #available_user_ids = [u.id for u in available_users]
     #for now quering all users and returning first one but that will change
-    return available_users[0].to_dict(), 200
+    return available_users[2].to_dict(), 200
 
 @app.route('/<int:user_id>/like', methods = ['POST'])
 def user_like(user_id):
@@ -44,7 +49,7 @@ def user_like(user_id):
     db.session.commit()
 
     #is it a match?
-    reciprocal_like = Like.query.filter(Like.matcher_id == data.get('matchee_id').filter(Like.matchee_id == data.get('matcher_id'))).first()
+    reciprocal_like = Like.query.filter(Like.matcher_id == data.get('matchee_id')).filter(Like.matchee_id == data.get('matcher_id')).first()
     if reciprocal_like:
         if reciprocal_like.accepted == 1:
             #you found a match!
@@ -57,8 +62,9 @@ def user_like(user_id):
 @app.route('/<int:user_id>/matches', methods = ['GET'])
 #return all matches
 def user_matches(user_id):
-    all_matches = Match.query.filter(Match.matcher_id == user_id).all()
-    return [m.to_dict() for m in all_matches],200
+    user = User.query.filter(User.id == user_id).first()
+    matches = user.matchee_matches
+    return [m.to_dict(rules=['-likes','-matches','-preferences']) for m in matches],200
 
 
 

@@ -6,10 +6,11 @@ import {
 } from "react-router-dom";
 import "./index.css";
 import App from "./App"
-import Home from "./pages/Home"
-import MyMatches from "./pages/MyMatches"
-import PlanDate from "./pages/PlanDate"
-import MyAccount from "./pages/MyAccount"
+import HomePage from "./pages/HomePage"
+import MatchListPage from "./pages/MatchesListPage"
+import PlanDatePage from "./pages/PlanDatePage"
+import MyAccountPage from "./pages/MyAccountPage"
+import MatchProfilePage from "./pages/MatchProfilePage"
 
 const routes = [
     {
@@ -18,19 +19,23 @@ const routes = [
       children:[
         {
           path: "/",
-          element: <Home></Home>
+          element: <HomePage></HomePage>
         },
         {
           path: "/mymatches",
-          element: <MyMatches></MyMatches>
+          element: <MatchListPage></MatchListPage>
         },
         {
           path:"/plandate",
-          element: <PlanDate></PlanDate>
+          element: <PlanDatePage></PlanDatePage>
         },
         {
           path:"/myaccount",
-          element: <MyAccount></MyAccount>
+          element: <MyAccountPage></MyAccountPage>
+        },
+        {
+          path:"/:id",
+          element: <MatchProfilePage></MatchProfilePage>
         }
       ]
     }

@@ -5,10 +5,14 @@ import {Outlet} from "react-router-dom"
 
 function App(){
     return(
-        <html>
+        <div>
             <NavBar/>
             <Outlet/>
-        </html>
+        </div>
+
+
+            
+        
     )
 }
 

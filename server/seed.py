@@ -13,9 +13,16 @@ from models import db, User, Like, Match, Preference
 if __name__ == '__main__':
     fake = Faker()
     with app.app_context():
+
+        #delete all previous data
+        Like.query.delete()
+        Match.query.delete()
+        Preference.query.delete()
+        User.query.delete()
+
         users = []
         for i in range(0,50):
-            user = User(username = fake.name(),age = fake.random_int(min=18, max=65),bio = fake.text())
+            user = User(username = fake.name(),age = fake.random_int(min=18, max=65),bio = fake.text(), image = fake.image_url(250,250))
             users.append(user)
 
         db.session.add_all(users)

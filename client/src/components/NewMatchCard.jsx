@@ -8,20 +8,20 @@ import Typography from '@mui/material/Typography';
 import {useState,useEffect} from "react"
 
 
-function UserCard(){
+function NewMatchCard(){
 
     const [user, setUser] = useState([])
-    const [postResponse, setPostResponse] = useState()
 
     useEffect(() =>{
-        fetch("http://127.0.0.1:5555/new_match") //getuserid
+        fetch("http://127.0.0.1:5555/new_match") 
         .then(response => response.json())
         .then(json => setUser(json))
     }, [])
 
+
+
     function handleDislike(){
-        //post to like table with accepted = -1
-        fetch("http://127.0.0.1:5555/like",{
+        fetch("http://127.0.0.1:5555/1/like",{
             method: "POST",
             headers:{
                 "Content-Type": "application/json",
@@ -32,17 +32,22 @@ function UserCard(){
                 accepted: -1
             })
         })
+        .then(response => {
+            if (!response.ok){throw new Error('Network response not ok')}
+            })
+        .catch(error =>{
+            console.error('There was a problem')
+            })
+        
+        fetch("http://127.0.0.1:5555/new_match") 
         .then(response => response.json())
-        .then(json => setPostResponse(json))
+        .then(json => setUser(json))
 
-        //make sure code is 201 then move to next person
-    
+        
     }
 
     function handleLike(){
-        //post to like table with accepted = 1
-        //if match is returned then show popup that you got a new match - should see new match in my matches
-        fetch("http://127.0.0.1:5555/like",{
+        fetch("http://127.0.0.1:5555/1/like",{
             method: "POST",
             headers:{
                 "Content-Type": "application/json",
@@ -56,22 +61,21 @@ function UserCard(){
             if (!response.ok){
                 throw new Error('Network response not ok')
             }
-            if(response.status == 200){
-                console.log("You got a new match!")
+            return response.json()})
+        .then(data =>{
+            if (data['MatchFlag'] == 1){
+                alert(`You matched with ${user.username}`)
             }
-            return response.json()
-            })
-        .then( data =>{
-            console.log(data)
         })
         .catch(error =>{
             console.error('There was a problem')
         })
 
-        //add in another call to fetch to re
- 
+        fetch("http://127.0.0.1:5555/new_match") 
+            .then(response => response.json())
+            .then(json => setUser(json))
+        
     }
-
 
     return(
         <Card sx={{maxWidth: 800}}>
@@ -86,8 +90,7 @@ function UserCard(){
                 <Button id="like" onClick = {handleLike}>❤️</Button>
             </CardActions>
         </Card>
-
     )
 }
 
-export default UserCard
+export default NewMatchCard

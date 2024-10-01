@@ -3,7 +3,9 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request
+from flask import request, session
+import random
+
 
 # Local imports
 from config import app, db
@@ -21,48 +23,60 @@ def index():
 def user(user_id):
     return User.query.filter(User.id == user_id).first().to_dict(), 200
 
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    user = User.query.filter(User.username == data['username']).first()
+    if not user:
+        return {'error':'login failed'},401
+    
+    session['user_id'] = user.id
+    print(user.id)
+
+    return user.to_dict(), 200
 
 #get match prospect
     #return a user that current user has not yet liked
-@app.route('/<int:user_id>/new_match', methods=['GET'])
-def new_match(user_id):
+@app.route('/new_match', methods=['GET'])
+def new_match():
     #not sure where username will be stored
     all_users = User.query.all()
-    prev_likes = Like.query.filter(Like.matcher_id == user_id).all()
+    prev_likes = Like.query.filter(Like.matcher_id == 1).all()
     prev_likes_ids = [p.matchee_id for p in prev_likes]
-    prev_likes_ids.append(user_id)
+    prev_likes_ids.append(1)
     available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
-    #available_user_ids = [u.id for u in available_users]
-    #for now quering all users and returning first one but that will change
-    return available_users[2].to_dict(), 200
+    return available_users[random.randint(0,len(available_users))].to_dict(), 200
 
-@app.route('/<int:user_id>/like', methods = ['POST'])
-def user_like(user_id):
+@app.route('/like', methods = ['POST'])
+def user_like():
     #post like data
     #if a match is created add to match table
     #if no match return nothing
     #if match return match
 
     data = request.get_json()
-    new_like = Like(matcher_id = user_id, matchee_id = data.get('matchee_id'), accepted = data.get('accepted'))
+    new_like = Like(matcher_id = 1, matchee_id = data.get('matchee_id'), accepted = data.get('accepted'))
     db.session.add(new_like)
     db.session.commit()
 
     #is it a match?
-    reciprocal_like = Like.query.filter(Like.matcher_id == data.get('matchee_id')).filter(Like.matchee_id == data.get('matcher_id')).first()
+    reciprocal_like = Like.query.filter(Like.matcher_id == data.get('matchee_id')).filter(Like.matchee_id == 1).first()
     if reciprocal_like:
         if reciprocal_like.accepted == 1:
             #you found a match!
-            new_match = Match(matcher_id = data.get('matcher_id'), matchee_id = data.get('matchee_id'))
-            new_match_reciprocal = Match(matcher_id = data.get('matchee_id'), matchee_id = data.get('matcher_id'))
+            new_match = Match(matcher_id = 1, matchee_id = data.get('matchee_id'))
+            new_match_reciprocal = Match(matcher_id = data.get('matchee_id'), matchee_id = 1)
+
             return new_match.to_dict(), 200
     else:
-        return {}, 204
+        return new_like.to_dict(), 201
 
-@app.route('/<int:user_id>/matches', methods = ['GET'])
+        #add flag to both ditionaries to determine if match or not
+
+@app.route('/matches', methods = ['GET'])
 #return all matches
-def user_matches(user_id):
-    user = User.query.filter(User.id == user_id).first()
+def user_matches():
+    user = User.query.filter(User.id == session['user_id']).first()
     matches = user.matchee_matches
     return [m.to_dict(rules=['-likes','-matches','-preferences']) for m in matches],200
 

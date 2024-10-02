@@ -1,48 +1,56 @@
-
 import {useState,useEffect} from "react"
-
 function AccountForm(){
-    const [error,setError] = useState()
+
     const [msg, setMsg] = useState()
+    const [defaultData, setDefaultData] = useState([])
+
+    useEffect( () => {
+    fetch(`http://127.0.0.1:5555/1`)
+    .then(response => response.json())
+    .then(json => setDefaultData(json))}, [])
     
-
     function handleSubmit(event){
-
         event.preventDefault()
 
-        fetch(`http://127.0.0.1:5555/login`,{
-            method: 'POST',
+        fetch(`http://127.0.0.1:5555/1`,{
+            method: 'PATCH',
             headers:{
                 'Content-Type':'application/json',
                 "Accept": 'application/json'
             },
+            withCredentials: true,
             body: JSON.stringify({
-                'username': event.target.username.value
+                'image': event.target.image.value,
+                'age': event.target.age.value,
+                'bio': event.target.bio.value,
             })
         })
         .then(response => {
             if (response.ok){
-                setMsg('Log in successful!')
+                setMsg('Update successful')
             } else{
-                setMsg('Log in failed!')
+                setMsg('Update failed')
                 return Promise.reject(response)
             }
         })
         .catch(response => response.json())
-        .then(data => setError(data))
     }
 
-    const errorElement = error ? <p style={{color: 'red'}}>{error.error}</p> : null
-    return (
+    return(
         <div>
+            {/* initialize with current values */}
             {msg ? <p>{msg}</p> : null}
-            {errorElement}
             <form onSubmit = {handleSubmit}>
-                <label>Username:</label>
-                <input type="text" name={"username"}></input>
-                <input type="submit" value="Login"></input>
+                <label>Image:</label>
+                <input type="text" name={"image"} defaultValue = {defaultData['image']}></input>
+                <label>Age:</label>
+                <input type="text" name={"age"} defaultValue = {defaultData['age']}></input>
+                <label>Bio:</label>
+                <input type="text" name={"bio"} defaultValue={defaultData['bio']} ></input>
+                <input type="submit" value="Update"></input>
             </form>
         </div>
-)}
+    )
+}
 
 export default AccountForm;

@@ -21,7 +21,7 @@ function NewMatchCard(){
 
 
     function handleDislike(){
-        fetch("http://127.0.0.1:5555/1/like",{
+        fetch("http://127.0.0.1:5555/like",{
             method: "POST",
             headers:{
                 "Content-Type": "application/json",
@@ -47,7 +47,7 @@ function NewMatchCard(){
     }
 
     function handleLike(){
-        fetch("http://127.0.0.1:5555/1/like",{
+        fetch("http://127.0.0.1:5555/like",{
             method: "POST",
             headers:{
                 "Content-Type": "application/json",

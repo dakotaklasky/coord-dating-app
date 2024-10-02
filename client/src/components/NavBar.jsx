@@ -8,7 +8,8 @@ function NavBar(){
             <NavLink to="/">Home </NavLink>
             <NavLink to="/mymatches">My Matches</NavLink>
             <NavLink to="/plandate">Plan Date</NavLink>
-            <NavLink to="/myaccount" >My Account</NavLink>
+            <NavLink to="/myaccount">My Account</NavLink>
+            <NavLink to="/login" >Login</NavLink>
         </nav>
 
 

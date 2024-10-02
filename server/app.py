@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, session
+from flask import Flask, request, session
 import random
 
 
@@ -19,27 +19,39 @@ def index():
     return {"hello":'Welcome!'},200
 
 #return user data
-@app.route('/<int:user_id>', methods=['GET'])
+@app.route('/<int:user_id>', methods=['GET','PATCH'])
 def user(user_id):
-    return User.query.filter(User.id == user_id).first().to_dict(), 200
+    user = User.query.filter(User.id == user_id).first()
+
+    if request.method == 'GET':
+        return user.to_dict(), 200
+    elif request.method == 'PATCH':
+        data = request.get_json()
+        for field in data:
+            setattr(user,field,data[field])
+        db.session.add(user)
+        db.session.commit()
+
+        return user.to_dict(), 200
 
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    user = User.query.filter(User.username == data['username']).first()
-    if not user:
+    username = data.get('username')
+    user = User.query.filter(User.username == username).first()
+    if user:
+        session['user_id'] = user.id
+        print(user.id)
+        return user.to_dict(), 200  
+    else:
         return {'error':'login failed'},401
-    
-    session['user_id'] = user.id
-    print(user.id)
-
-    return user.to_dict(), 200
 
 #get match prospect
     #return a user that current user has not yet liked
 @app.route('/new_match', methods=['GET'])
 def new_match():
     #not sure where username will be stored
+    print(session.get('user_id'))
     all_users = User.query.all()
     prev_likes = Like.query.filter(Like.matcher_id == 1).all()
     prev_likes_ids = [p.matchee_id for p in prev_likes]
@@ -47,12 +59,17 @@ def new_match():
     available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
     return available_users[random.randint(0,len(available_users))].to_dict(), 200
 
-@app.route('/<int:user_id>/like', methods = ['POST'])
-def user_like(user_id):
+@app.route('/like', methods = ['POST'])
+def user_like():
     #post like data
     #if a match is created add to match table
     #if no match return nothing
     #if match return match
+
+    if 'user_id' in session:
+        user_id = session.get('user_id')
+    else:
+        return {"error":"please login"}, 401
 
     data = request.get_json()
     new_like = Like(matcher_id = user_id, matchee_id = data.get('matchee_id'), accepted = data.get('accepted'))
@@ -79,10 +96,10 @@ def user_like(user_id):
         like_dict['MatchFlag'] = 0
         return like_dict, 201
 
-@app.route('/matches', methods = ['GET'])
+@app.route('/<int:user_id>/matches', methods = ['GET'])
 #return all matches
-def user_matches():
-    user = User.query.filter(User.id == session['user_id']).first()
+def user_matches(user_id):
+    user = User.query.filter(User.id == user_id).first()
     matches = user.matchee_matches
     return [m.to_dict(rules=['-likes','-matches','-preferences']) for m in matches],200
 

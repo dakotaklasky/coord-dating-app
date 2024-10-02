@@ -9,8 +9,9 @@ import App from "./App"
 import HomePage from "./pages/HomePage"
 import MatchListPage from "./pages/MatchesListPage"
 import PlanDatePage from "./pages/PlanDatePage"
-import MyAccountPage from "./pages/MyAccountPage"
+import AccountPage from "./pages/AccountPage"
 import MatchProfilePage from "./pages/MatchProfilePage"
+import LoginPage from "./pages/LoginPage"
 
 const routes = [
     {
@@ -31,11 +32,15 @@ const routes = [
         },
         {
           path:"/myaccount",
-          element: <MyAccountPage></MyAccountPage>
+          element: <AccountPage></AccountPage>
         },
         {
           path:"/:id",
           element: <MatchProfilePage></MatchProfilePage>
+        },
+        {
+          path:"/login",
+          element: <LoginPage></LoginPage>
         }
       ]
     }

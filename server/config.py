@@ -18,7 +18,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 
-app.secret_key = os.getenv('SECRET_KEY')
+app.secret_key = os.environ.get('SECRET_KEY')
 
 # Define metadata, instantiate db
 metadata = MetaData(naming_convention={
@@ -30,6 +30,6 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 # Instantiate CORS
-CORS(app)
+cors = CORS(app, supports_credentials=True)
 
 

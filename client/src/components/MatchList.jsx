@@ -7,7 +7,7 @@ function MatchList(){
     const [myData,setMyData] = useState({})
 
     useEffect(() =>{
-        fetch("http://127.0.0.1:5555/matches") 
+        fetch("http://127.0.0.1:5555/1/matches") 
         .then(response => response.json())
         .then(json => setMyData(json))
     }, [])

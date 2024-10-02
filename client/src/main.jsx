@@ -12,11 +12,14 @@ import PlanDatePage from "./pages/PlanDatePage"
 import AccountPage from "./pages/AccountPage"
 import MatchProfilePage from "./pages/MatchProfilePage"
 import LoginPage from "./pages/LoginPage"
+import ErrorPage from "./pages/ErrorPage"
+import LogoutPage from "./pages/LogoutPage"
 
 const routes = [
     {
       path: "/",
       element: <App/>,
+      errorElement: <ErrorPage/>,
       children:[
         {
           path: "/",
@@ -41,6 +44,10 @@ const routes = [
         {
           path:"/login",
           element: <LoginPage></LoginPage>
+        },
+        {
+          path:"/logout",
+          element: <LogoutPage></LogoutPage>
         }
       ]
     }

@@ -5,20 +5,27 @@ function AccountForm(){
     const [defaultData, setDefaultData] = useState([])
 
     useEffect( () => {
-    fetch(`http://127.0.0.1:5555/1`)
+    fetch(`http://127.0.0.1:5555/myaccount`,{
+        method: "GET",
+        headers:{
+            "Content-Type": "application/json",
+            "Accept": 'application/json'
+        },
+        credentials: 'include'
+    })
     .then(response => response.json())
     .then(json => setDefaultData(json))}, [])
     
     function handleSubmit(event){
         event.preventDefault()
 
-        fetch(`http://127.0.0.1:5555/1`,{
+        fetch(`http://127.0.0.1:5555/myaccount`,{
             method: 'PATCH',
             headers:{
                 'Content-Type':'application/json',
                 "Accept": 'application/json'
             },
-            withCredentials: true,
+            credentials: 'include',
             body: JSON.stringify({
                 'image': event.target.image.value,
                 'age': event.target.age.value,

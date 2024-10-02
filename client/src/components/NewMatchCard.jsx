@@ -13,11 +13,21 @@ function NewMatchCard(){
     const [user, setUser] = useState([])
 
     useEffect(() =>{
-        fetch("http://127.0.0.1:5555/new_match") 
-        .then(response => response.json())
+        fetch("http://127.0.0.1:5555/new_match",{
+            method: "GET",
+            headers:{
+                "Content-Type": "application/json",
+                "Accept": 'application/json'
+            },
+            credentials: 'include',
+        }) 
+        .then(response => {
+            if (!response.ok){throw new Error('Network response not ok')}
+            else{return response.json()}
+        })
+        .catch(error =>{console.error('There was a problem')})
         .then(json => setUser(json))
     }, [])
-
 
 
     function handleDislike(){
@@ -27,6 +37,7 @@ function NewMatchCard(){
                 "Content-Type": "application/json",
                 "Accept": 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 matchee_id: user.id,
                 accepted: -1
@@ -39,8 +50,19 @@ function NewMatchCard(){
             console.error('There was a problem')
             })
         
-        fetch("http://127.0.0.1:5555/new_match") 
-        .then(response => response.json())
+        fetch("http://127.0.0.1:5555/new_match",{
+            method: "GET",
+            headers:{
+                "Content-Type": "application/json",
+                "Accept": 'application/json'
+            },
+            credentials: 'include',
+        }) 
+        .then(response => {
+            if (!response.ok){throw new Error('Network response not ok')}
+            else{return response.json()}
+        })
+        .catch(error =>{console.error('There was a problem')})
         .then(json => setUser(json))
 
         
@@ -52,6 +74,7 @@ function NewMatchCard(){
             headers:{
                 "Content-Type": "application/json",
             },
+            credentials: 'include',
             body: JSON.stringify({
                 matchee_id: user.id,
                 accepted: 1,
@@ -71,9 +94,20 @@ function NewMatchCard(){
             console.error('There was a problem')
         })
 
-        fetch("http://127.0.0.1:5555/new_match") 
-            .then(response => response.json())
-            .then(json => setUser(json))
+        fetch("http://127.0.0.1:5555/new_match",{
+            method: "GET",
+            headers:{
+                "Content-Type": "application/json",
+                "Accept": 'application/json'
+            },
+            credentials: 'include',
+        }) 
+        .then(response => {
+            if (!response.ok){throw new Error('Network response not ok')}
+            else{return response.json()}
+        })
+        .catch(error =>{console.error('There was a problem')})
+        .then(json => setUser(json))
         
     }
 

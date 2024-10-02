@@ -19,12 +19,24 @@ def index():
     return {"hello":'Welcome!'},200
 
 #return user data
-@app.route('/<int:user_id>', methods=['GET','PATCH'])
+@app.route('/<int:user_id>', methods=['GET'])
 def user(user_id):
+        return User.query.filter(User.id == user_id).first().to_dict(), 200
+
+
+@app.route('/myaccount', methods=['GET','PATCH'])
+def myaccount():
+
+    if 'user_id' in session:
+        user_id = session.get('user_id')
+    else:
+        return {"error","please login"}, 401
+
     user = User.query.filter(User.id == user_id).first()
 
     if request.method == 'GET':
         return user.to_dict(), 200
+
     elif request.method == 'PATCH':
         data = request.get_json()
         for field in data:
@@ -46,16 +58,24 @@ def login():
     else:
         return {'error':'login failed'},401
 
+@app.route('/logout',methods=['DELETE'])
+def logout():
+    session.clear()
+    return {}, 204
+
 #get match prospect
     #return a user that current user has not yet liked
 @app.route('/new_match', methods=['GET'])
 def new_match():
-    #not sure where username will be stored
-    print(session.get('user_id'))
-    all_users = User.query.all()
-    prev_likes = Like.query.filter(Like.matcher_id == 1).all()
+    if 'user_id' in session:
+        user_id = session.get('user_id')
+    else:
+        return {"error":"please login"}, 401
+    #user_id = 2
+    #all_users = User.query.all()
+    prev_likes = Like.query.filter(Like.matcher_id == user_id).all()
     prev_likes_ids = [p.matchee_id for p in prev_likes]
-    prev_likes_ids.append(1)
+    prev_likes_ids.append(user_id)
     available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
     return available_users[random.randint(0,len(available_users))].to_dict(), 200
 
@@ -96,9 +116,12 @@ def user_like():
         like_dict['MatchFlag'] = 0
         return like_dict, 201
 
-@app.route('/<int:user_id>/matches', methods = ['GET'])
-#return all matches
-def user_matches(user_id):
+@app.route('/matches', methods = ['GET'])
+def user_matches():
+    if 'user_id' in session:
+        user_id = session.get('user_id')
+    else:
+        return {"error": "please login"}, 401
     user = User.query.filter(User.id == user_id).first()
     matches = user.matchee_matches
     return [m.to_dict(rules=['-likes','-matches','-preferences']) for m in matches],200

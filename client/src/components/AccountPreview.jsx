@@ -13,11 +13,26 @@ function AccountPreview({id}){
     const [myDetails, setMyDetails] = useState([])
 
     useEffect(() =>{
-        fetch(`http://127.0.0.1:5555/${id}`) 
-        .then(response => response.json())
+        fetch(`http://127.0.0.1:5555/myaccount`,{
+            method: "GET",
+            headers:{
+                "Content-Type": "application/json",
+                "Accept": 'application/json'
+            },
+            credentials: 'include',
+        }) 
+        .then(response => {
+            if (!response.ok){throw new Error('Network response not ok')}
+            else{
+                return response.json()
+            }
+                
+        })
+        .catch(error =>{
+            console.error('There was a problem')
+            })
         .then(json => setMyDetails(json))
     }, [])
-
 
     return(
             <Card sx={{maxWidth: 800}}>

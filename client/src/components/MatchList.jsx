@@ -7,8 +7,19 @@ function MatchList(){
     const [myData,setMyData] = useState({})
 
     useEffect(() =>{
-        fetch("http://127.0.0.1:5555/1/matches") 
-        .then(response => response.json())
+        fetch("http://127.0.0.1:5555/matches",{
+            method: "GET",
+            headers:{
+                "Content-Type": "application/json",
+                "Accept": 'application/json'
+            },
+            credentials: 'include'
+        }) 
+        .then(response => {
+            if (!response.ok){throw new Error('Network response not ok')}
+            else{return response.json()}
+        })
+        .catch(error =>{console.error('There was a problem')})
         .then(json => setMyData(json))
     }, [])
 
@@ -17,15 +28,9 @@ function MatchList(){
         matches.push([myData[m].username,myData[m].id])
     }
 
-    
- 
-
-    //console.log(matches)
-        
-
     return(
         <ul>
-            {matches.map((match,index) => (<li><NavLink key={index} to={"/"+ match[1]}>{match[0]}</NavLink></li>))}
+            {matches.map((match,index) => (<li key={index}><NavLink to={"/"+ match[1]}>{match[0]}</NavLink></li>))}
         </ul>
     )
 }

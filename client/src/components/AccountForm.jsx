@@ -39,7 +39,6 @@ function AccountForm(){
                 'image': event.target.image.value,
                 'age': event.target.age.value,
                 'bio': event.target.bio.value,
-                'education': event.target.education.value,
                 'gender': event.target.gender.value,
                 'height': event.target.height.value
             })

@@ -32,13 +32,14 @@ if __name__ == '__main__':
         preferences = []
         likes = []
         matches = []
-        for j in range(1,80):
 
-            preference_2 = Preference(user_id=j,pref_category='Gender', pref_value=gender_options[fake.random_int(min=0,max=1)])
-            preference_3 = Preference(user_id=j,pref_category='Height',pref_value=str(fake.random_int(min=150, max=200)))
+        for k in range(0,100):
+            preference_1 = Preference(user_id=k,pref_category='Gender', pref_value=gender_options[fake.random_int(min=0,max=1)])
+            preference_2 = Preference(user_id=k,pref_category='Height',pref_value=str(fake.random_int(min=150, max=200)))
+            preferences.append(preference_1)
             preferences.append(preference_2)
-            preferences.append(preference_3)
-        
+
+        for j in range(1,80):       
             like_1 = Like(matcher_id=j,matchee_id=j+2,accepted=-1)
             like_2 = Like(matcher_id=j,matchee_id=j+4, accepted=1)
             like_3 = Like(matcher_id=j,matchee_id=j+6, accepted=1)

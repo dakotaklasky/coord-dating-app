@@ -100,7 +100,7 @@ def new_match():
     if len(available_users) == 0:
         return {"no_users":"out of users"}, 200
     else:
-        return available_users[random.randint(0,len(available_users)-1)].to_dict(), 200
+        return available_users[0].to_dict(), 200
 
 @app.route('/like', methods = ['POST'])
 def user_like():
@@ -153,7 +153,7 @@ def user_matches():
 def signup():
     data = request.get_json()
     try:
-        new_user = User(username=data.get('username'),age=data.get('age'), image=data.get('image'),bio=data.get('bio'))
+        new_user = User(username=data.get('username'),age=data.get('age'), image=data.get('image'),bio=data.get('bio'), gender=data.get('gender'), height=data.get('height') )
     except ValueError:
         return {"error","invalid data"}, 401
     db.session.add(new_user)

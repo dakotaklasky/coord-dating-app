@@ -38,8 +38,8 @@ function NewMatchCard(){
     }
 
 
-    function handleDislike(){
-        fetch("http://127.0.0.1:5555/like",{
+    async function handleDislike(){
+        await fetch("http://127.0.0.1:5555/like",{
             method: "POST",
             headers:{
                 "Content-Type": "application/json",
@@ -58,7 +58,7 @@ function NewMatchCard(){
             console.error('There was a problem')
             })
 
-        fetch("http://127.0.0.1:5555/new_match",{
+        await fetch("http://127.0.0.1:5555/new_match",{
             method: "GET",
             headers:{
                 "Content-Type": "application/json",
@@ -75,8 +75,8 @@ function NewMatchCard(){
 
     }
 
-    function handleLike(){
-        fetch("http://127.0.0.1:5555/like",{
+    async function handleLike(){
+        await fetch("http://127.0.0.1:5555/like",{
             method: "POST",
             headers:{
                 "Content-Type": "application/json",
@@ -101,7 +101,7 @@ function NewMatchCard(){
             console.error('There was a problem')
         })
 
-        fetch("http://127.0.0.1:5555/new_match",{
+        await fetch("http://127.0.0.1:5555/new_match",{
             method: "GET",
             headers:{
                 "Content-Type": "application/json",

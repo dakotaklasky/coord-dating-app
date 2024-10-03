@@ -51,6 +51,9 @@ class User(db.Model, SerializerMixin):
     age = db.Column(db.Integer)
     image = db.Column(db.String)
     bio = db.Column(db.String)
+    education = db.Column(db.String)
+    gender = db.Column(db.String)
+    height = db.Column(db.Integer)
 
     preferences = db.relationship('Preference',back_populates='user')
     likes = db.relationship('Like',foreign_keys=[Like.matcher_id],back_populates='matcher_user')
@@ -62,6 +65,14 @@ class User(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<User id:{self.id}, username:{self.username}, age:{self.age}>'
+
+class PreferenceOption(db.Model, SerializerMixin):
+    __tablename__= 'preference_options'
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String, nullable=False)
+    options = db.Column(db.String)
+    minval = db.Column(db.Integer)
+    maxval = db.Column(db.Integer)
 
 
 

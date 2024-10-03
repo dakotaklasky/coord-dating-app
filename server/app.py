@@ -12,12 +12,6 @@ from config import app, db
 # Add your model imports
 from models import User,Like,Match,Preference
 
-# Views go here!
-
-@app.route('/')
-def index():
-    return {"hello":'Welcome!'},200
-
 #return user data
 @app.route('/<int:user_id>', methods=['GET'])
 def user(user_id):
@@ -26,25 +20,44 @@ def user(user_id):
 
 @app.route('/myaccount', methods=['GET','PATCH'])
 def myaccount():
-
     if 'user_id' in session:
         user_id = session.get('user_id')
+        user = User.query.filter(User.id == user_id).first()
+
+        if request.method == 'GET':
+            return user.to_dict(), 200
+
+        elif request.method == 'PATCH':
+            data = request.get_json()
+            for field in data:
+                setattr(user,field,data[field])
+            db.session.add(user)
+            db.session.commit()
+
+            return user.to_dict(), 200
     else:
-        return {"error","please login"}, 401
+        return {"error":"please login"}, 401
 
-    user = User.query.filter(User.id == user_id).first()
+@app.route('/mypreferences', methods=['GET','PATCH'])
+def mypreferences():
+    if 'user_id' in session:
+        user_id = session.get('user_id')
+        user = User.query.filter(User.id == user_id).first()
 
-    if request.method == 'GET':
-        return user.to_dict(), 200
+        if request.method == 'GET':
+            prefs = user.preferences
+            return [p.to_dict() for p in prefs], 200
+        if request.method == 'PATCH':
+            data = request.get_json()
+            for field in data:
+                pref = Preference.query.filter(Preference.user_id == user_id).filter(Preference.pref_category == field).first()
+                pref.pref_value = data[field]
+                db.session.add(pref)
+            db.session.commit()
+            return [p.to_dict() for p in Preference.query.filter(Preference.user_id == user_id).all()], 200
+    else:
+        return {"error":"please login!"}, 401
 
-    elif request.method == 'PATCH':
-        data = request.get_json()
-        for field in data:
-            setattr(user,field,data[field])
-        db.session.add(user)
-        db.session.commit()
-
-        return user.to_dict(), 200
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -71,13 +84,23 @@ def new_match():
         user_id = session.get('user_id')
     else:
         return {"error":"please login"}, 401
-    #user_id = 2
-    #all_users = User.query.all()
+
     prev_likes = Like.query.filter(Like.matcher_id == user_id).all()
     prev_likes_ids = [p.matchee_id for p in prev_likes]
     prev_likes_ids.append(user_id)
-    available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
-    return available_users[random.randint(0,len(available_users))].to_dict(), 200
+    user_preferences = User.query.filter(User.id == user_id).first().preferences
+    #create preference dictionary
+    pref_dict = {}
+    for i in range(0,len(user_preferences)):
+        pref_dict[user_preferences[i].pref_category]= user_preferences[i].pref_value
+    #available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
+
+    available_users = User.query.filter(User.id.not_in(prev_likes_ids)).filter(User.education == pref_dict['Education']).filter(User.gender == pref_dict['Gender']).filter(User.height >= pref_dict['Height']).all()
+    print(available_users)
+    if len(available_users) == 0:
+        return {"no_users":"out of users"}, 200
+    else:
+        return available_users[0].to_dict(), 200
 
 @app.route('/like', methods = ['POST'])
 def user_like():
@@ -120,12 +143,22 @@ def user_like():
 def user_matches():
     if 'user_id' in session:
         user_id = session.get('user_id')
+        user = User.query.filter(User.id == user_id).first()
+        matches = user.matchee_matches
+        return [m.to_dict(rules=['-likes','-matches','-preferences']) for m in matches],200
     else:
         return {"error": "please login"}, 401
-    user = User.query.filter(User.id == user_id).first()
-    matches = user.matchee_matches
-    return [m.to_dict(rules=['-likes','-matches','-preferences']) for m in matches],200
 
+@app.route('/signup',methods=['POST'])
+def signup():
+    data = request.get_json()
+    try:
+        new_user = User(username=data.get('username'),age=data.get('age'), image=data.get('image'),bio=data.get('bio'))
+    except ValueError:
+        return {"error","invalid data"}, 401
+    db.session.add(new_user)
+    db.session.commit()
+    return new_user.to_dict(), 201
 
 
 ### test routes in postman

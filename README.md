@@ -49,13 +49,13 @@ List of current matches. See user profile by clicking link.
 
 ### My Account
 - View Profile
-  See preview of what other users see.
+  - See preview of what other users see.
 
 - Edit Profile
-  Update your personal information.
+  - Update your personal information.
 
 - Edit Preferences
-  Update your preferences for other users.
+  - Update your preferences for other users.
 
 ### Login
 Enter a valid username.

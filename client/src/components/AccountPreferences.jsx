@@ -1,11 +1,11 @@
 import {useState,useEffect} from "react"
-function AccountForm(){
+function AccountPreferences(){
 
     const [msg, setMsg] = useState()
-    const [defaultData, setDefaultData] = useState([])
+    const [defaultPreferences, setDefaultPreferences] = useState([])
 
     useEffect( () => {
-        fetch(`http://127.0.0.1:5555/myaccount`,{
+        fetch(`http://127.0.0.1:5555/mypreferences`,{
             method: "GET",
             headers:{
                 "Content-Type": "application/json",
@@ -18,31 +18,37 @@ function AccountForm(){
             else{return response.json()}
         })
         .catch(error =>{console.error('There was a problem')})
-        .then(json => setDefaultData(json))
+        .then(json => setDefaultPreferences(json))
     }, [])  
 
-    if (!defaultData){
+    if (!defaultPreferences){
         return <p>Please login!</p>
     }
+
+    const pref_list = []
+    for(const i in defaultPreferences){
+        pref_list.push([defaultPreferences[i].pref_category,defaultPreferences[i].pref_value])
+    }
+
     
     function handleSubmit(event){
         event.preventDefault()
 
-        fetch(`http://127.0.0.1:5555/myaccount`,{
+        const pref_update = {}
+        for (const j in pref_list){
+            pref_update[pref_list[j][0]]= event.target[pref_list[j][0]].value
+        }
+
+        console.log(pref_update)
+
+        fetch(`http://127.0.0.1:5555/mypreferences`,{
             method: 'PATCH',
             headers:{
                 'Content-Type':'application/json',
                 "Accept": 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify({
-                'image': event.target.image.value,
-                'age': event.target.age.value,
-                'bio': event.target.bio.value,
-                'education': event.target.education.value,
-                'gender': event.target.gender.value,
-                'height': event.target.height.value
-            })
+            body: JSON.stringify(pref_update)
         })
         .then(response => {
             if (response.ok){setMsg('Update successful')}
@@ -59,20 +65,16 @@ function AccountForm(){
             {/* initialize with current values */}
             {msg ? <p>{msg}</p> : null}
             <form onSubmit = {handleSubmit}>
-                <label>Image:</label>
-                <input type="text" name={"image"} defaultValue = {defaultData['image']}></input><br></br>
-                <label>Age:</label>
-                <input type="text" name={"age"} defaultValue = {defaultData['age']}></input><br></br>
-                <label>Bio:</label>
-                <input type="text" name={"bio"} defaultValue={defaultData['bio']} ></input><br></br>
-                <label>Gender:</label>
-                <input type="text" name={"gender"} defaultValue = {defaultData['gender']}></input><br></br>
-                <label>Height:</label>
-                <input type="text" name={"height"} defaultValue = {defaultData['height']}></input><br></br>
+                {pref_list.map(([category,value]) => (
+                    <div key={category}>
+                        <label>{category}</label>
+                        <input type="text" name={category} defaultValue = {value}></input>
+                        </div>
+                ))}
                 <input type="submit" value="Update"></input>
             </form>
         </div>
     )
 }
 
-export default AccountForm;
+export default AccountPreferences;

@@ -10,6 +10,7 @@ function NavBar(){
             <NavLink to="/plandate">Plan Date</NavLink>
             <NavLink to="/myaccount">My Account</NavLink>
             <NavLink to="/login" >Login</NavLink>
+            <NavLink to="signup">Sign Up</NavLink>
             <NavLink to="/logout">Logout</NavLink>
         </nav>
 

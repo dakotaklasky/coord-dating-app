@@ -29,6 +29,14 @@ function NewMatchCard(){
         .then(json => setUser(json))
     }, [])
 
+    if (!user){
+        return <p>Please login!</p>
+    }
+
+    if(user.no_users){
+        return <p>You went through all the users!</p>
+    }
+
 
     function handleDislike(){
         fetch("http://127.0.0.1:5555/like",{
@@ -49,7 +57,7 @@ function NewMatchCard(){
         .catch(error =>{
             console.error('There was a problem')
             })
-        
+
         fetch("http://127.0.0.1:5555/new_match",{
             method: "GET",
             headers:{
@@ -65,7 +73,6 @@ function NewMatchCard(){
         .catch(error =>{console.error('There was a problem')})
         .then(json => setUser(json))
 
-        
     }
 
     function handleLike(){
@@ -116,7 +123,7 @@ function NewMatchCard(){
             <CardContent>
                 <img src={user.image} alt="User Profile Picture"/>
                 <h2>{user.username}</h2>
-                <p>{user.age}</p>
+                <p>{user.age} | {user.gender} | {user.height}cm</p>
                 <p>{user.bio}</p>
             </CardContent>
             <CardActions>

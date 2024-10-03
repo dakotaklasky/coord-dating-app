@@ -51,7 +51,6 @@ class User(db.Model, SerializerMixin):
     age = db.Column(db.Integer)
     image = db.Column(db.String)
     bio = db.Column(db.String)
-    education = db.Column(db.String)
     gender = db.Column(db.String)
     height = db.Column(db.Integer)
 

@@ -14,6 +14,7 @@ import MatchProfilePage from "./pages/MatchProfilePage"
 import LoginPage from "./pages/LoginPage"
 import ErrorPage from "./pages/ErrorPage"
 import LogoutPage from "./pages/LogoutPage"
+import SignupPage from "./pages/SignupPage"
 
 const routes = [
     {
@@ -23,31 +24,35 @@ const routes = [
       children:[
         {
           path: "/",
-          element: <HomePage></HomePage>
+          element: <HomePage/>
         },
         {
           path: "/mymatches",
-          element: <MatchListPage></MatchListPage>
+          element: <MatchListPage/>
         },
         {
           path:"/plandate",
-          element: <PlanDatePage></PlanDatePage>
+          element: <PlanDatePage/>
         },
         {
           path:"/myaccount",
-          element: <AccountPage></AccountPage>
+          element: <AccountPage/>
         },
         {
           path:"/:id",
-          element: <MatchProfilePage></MatchProfilePage>
+          element: <MatchProfilePage/>
         },
         {
           path:"/login",
-          element: <LoginPage></LoginPage>
+          element: <LoginPage/>
+        },
+        {
+          path:"/signup",
+          element:<SignupPage/>
         },
         {
           path:"/logout",
-          element: <LogoutPage></LogoutPage>
+          element: <LogoutPage/>
         }
       ]
     }

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import AccountPreview from "../components/AccountPreview"
 import AccountForm from "../components/AccountForm"
 import Button from '@mui/material/Button';
+import AccountPreferences from "../components/AccountPreferences"
 
 
 function AccountPage() {
@@ -13,14 +14,19 @@ function AccountPage() {
     }
     
     function editProfile(){
-        setAccountView('edit')
+        setAccountView('edit_profile')
+    }
+
+    function editPreferences(){
+        setAccountView('edit_preference')
     }
 
   return (
     <div>
        <Button onClick = {viewProfile}>View Preview</Button>
        <Button onClick = {editProfile}>Edit Profile</Button>
-       {accountView == 'preview'? <AccountPreview id={1}/> : <AccountForm/>}
+       <Button onClick = {editPreferences}>Edit Preferences</Button>
+       {accountView == 'preview'? <AccountPreview /> : accountView == 'edit_profile' ?<AccountForm/> : <AccountPreferences/>}
     </div>
   )
 }

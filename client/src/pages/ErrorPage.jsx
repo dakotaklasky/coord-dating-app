@@ -4,7 +4,7 @@ export default function ErrorPage() {
     return (
     <div>
         <NavBar/>
-        <h1>Something went wrong! Try logging in</h1>
+        <h1>Something went wrong!</h1>
     </div>
       
     )

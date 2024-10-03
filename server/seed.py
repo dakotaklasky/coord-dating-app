@@ -20,11 +20,10 @@ if __name__ == '__main__':
         Preference.query.delete()
         User.query.delete()
 
-        education_options = ['No Preference','High School', 'Undergrad','Graduate']
-        gender_options = ['Man','Woman','Nonbinary']
+        gender_options = ['Man','Woman']
         users = []
         for i in range(0,100):
-            user = User(username = fake.name(),age = fake.random_int(min=18, max=65),bio = fake.text(), image = fake.image_url(250,250), education=education_options[fake.random_int(min=0,max=3)], gender=gender_options[fake.random_int(min=0,max=2)], height=fake.random_int(min=150, max=200))
+            user = User(username = fake.name(),age = fake.random_int(min=18, max=65),bio = fake.text(), image = fake.image_url(250,250), gender=gender_options[fake.random_int(min=0,max=1)], height=fake.random_int(min=150, max=200))
             users.append(user)
 
         db.session.add_all(users)
@@ -35,10 +34,8 @@ if __name__ == '__main__':
         matches = []
         for j in range(1,80):
 
-            preference_1 = Preference(user_id=j,pref_category='Education',pref_value=education_options[fake.random_int(min=0,max=3)])
-            preference_2 = Preference(user_id=j,pref_category='Gender', pref_value=gender_options[fake.random_int(min=0,max=2)])
+            preference_2 = Preference(user_id=j,pref_category='Gender', pref_value=gender_options[fake.random_int(min=0,max=1)])
             preference_3 = Preference(user_id=j,pref_category='Height',pref_value=str(fake.random_int(min=150, max=200)))
-            preferences.append(preference_1)
             preferences.append(preference_2)
             preferences.append(preference_3)
         
@@ -57,10 +54,8 @@ if __name__ == '__main__':
             likes.append(match_3)
 
         pref_options = []
-        pref_option1 = PreferenceOption(category='Education',options='No Preference,High School,Undergrad,Graduate')
         pref_option2 = PreferenceOption(category='Gender',options='Man,Woman,Nonbinary')
         pref_option3 = PreferenceOption(category='Height',minval=90, maxval=200)
-        pref_options.append(pref_option1)
         pref_options.append(pref_option2)
         pref_options.append(pref_option3)
     

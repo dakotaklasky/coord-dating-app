@@ -24,7 +24,7 @@ function UserDetails({id}){
             <CardContent>
                 <img src={userDetails.image} alt="User Profile Picture"/>
                 <h2>{userDetails.username}</h2>
-                <p>{userDetails.age}</p>
+                <p>{userDetails.age} | {userDetails.gender} | {userDetails.height}</p>
                 <p>{userDetails.bio}</p>
             </CardContent>
         </Card>

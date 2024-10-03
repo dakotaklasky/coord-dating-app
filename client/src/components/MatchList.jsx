@@ -23,6 +23,10 @@ function MatchList(){
         .then(json => setMyData(json))
     }, [])
 
+    if(!myData){
+        return <p>Please login!</p>
+    }
+
     const matches = []
     for (let m in myData){
         matches.push([myData[m].username,myData[m].id])

@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import {useState,useEffect} from "react"
 
 
-function AccountPreview({id}){
+function AccountPreview(){
 
     const [myDetails, setMyDetails] = useState([])
 
@@ -23,23 +23,22 @@ function AccountPreview({id}){
         }) 
         .then(response => {
             if (!response.ok){throw new Error('Network response not ok')}
-            else{
-                return response.json()
-            }
-                
+            else{return response.json()}
         })
-        .catch(error =>{
-            console.error('There was a problem')
-            })
+        .catch(error => {console.error('There was a problem')})
         .then(json => setMyDetails(json))
     }, [])
+
+    if(!myDetails){
+        return (<p>Please login!</p>)
+    }
 
     return(
             <Card sx={{maxWidth: 800}}>
             <CardContent>
                 <img src={myDetails.image} alt="User Profile Picture"/>
                 <h2>{myDetails.username}</h2>
-                <p>{myDetails.age}</p>
+                <p>{myDetails.age} | {myDetails.gender} | {myDetails.height}</p>
                 <p>{myDetails.bio}</p>
             </CardContent>
         </Card>

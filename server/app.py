@@ -93,14 +93,14 @@ def new_match():
     pref_dict = {}
     for i in range(0,len(user_preferences)):
         pref_dict[user_preferences[i].pref_category]= user_preferences[i].pref_value
-    #available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
+    available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
 
-    available_users = User.query.filter(User.id.not_in(prev_likes_ids)).filter(User.education == pref_dict['Education']).filter(User.gender == pref_dict['Gender']).filter(User.height >= pref_dict['Height']).all()
-    print(available_users)
+    available_users = User.query.filter(User.id.not_in(prev_likes_ids)).filter(User.gender == pref_dict['Gender']).filter(User.height >= pref_dict['Height']).all()
+    #print(available_users)
     if len(available_users) == 0:
         return {"no_users":"out of users"}, 200
     else:
-        return available_users[0].to_dict(), 200
+        return available_users[random.randint(0,len(available_users)-1)].to_dict(), 200
 
 @app.route('/like', methods = ['POST'])
 def user_like():

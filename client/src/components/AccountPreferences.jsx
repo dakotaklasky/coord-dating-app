@@ -39,8 +39,6 @@ function AccountPreferences(){
             pref_update[pref_list[j][0]]= event.target[pref_list[j][0]].value
         }
 
-        console.log(pref_update)
-
         fetch(`http://127.0.0.1:5555/mypreferences`,{
             method: 'PATCH',
             headers:{
@@ -62,7 +60,6 @@ function AccountPreferences(){
 
     return(
         <div>
-            {/* initialize with current values */}
             {msg ? <p>{msg}</p> : null}
             <form onSubmit = {handleSubmit}>
                 {pref_list.map(([category,value]) => (

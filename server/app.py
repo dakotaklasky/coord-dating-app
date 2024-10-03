@@ -182,10 +182,20 @@ def user_matches():
 def signup():
     data = request.get_json()
     try:
-        new_user = User(username=data.get('username'),age=data.get('age'), image=data.get('image'),bio=data.get('bio'), gender=data.get('gender'), height=data.get('height') )
+        new_user = User(username=data.get('username'),age=data.get('age'), image=data.get('image'),bio=data.get('bio'), gender=data.get('gender'), height=data.get('height'))
     except ValueError:
-        return {"error","invalid data"}, 401
+        return {"error":"invalid data"}, 401
     db.session.add(new_user)
+    db.session.commit()
+
+    user = User.query.filter(User.username == data.get('username')).first()
+    try:
+        new_pref1 = Preference(user_id=user.id,pref_category='Height',pref_value=data.get('height_pref'))
+        new_pref2 = Preference(user_id=user.id,pref_category='Gender',pref_value=data.get('gender_pref'))
+    except ValueError:
+        return {"error":"invalid data"}, 401
+    db.session.add(new_pref1)
+    db.session.add(new_pref2)
     db.session.commit()
     return new_user.to_dict(), 201
 

@@ -22,7 +22,9 @@ function Signup(){
                 'age': event.target.age.value,
                 'bio': event.target.bio.value,
                 'gender': event.target.gender.value,
-                'height': event.target.height.value
+                'height': event.target.height.value,
+                'gender_pref':event.target.gender_pref.value,
+                'height_pref':event.target.height_pref.value
             })
         })
         .then(response => {
@@ -52,9 +54,17 @@ function Signup(){
                 <label>Gender:</label>
                 <input type="text" name={"gender"} ></input><br></br>
                 <label>Height:</label>
-                <input type="text" name={"height"}></input><br></br>
+                <input type="text" name={"height"}></input><br></br><br></br>
+                <label>Preferences:</label><br></br>
+                <label>Gender Preference:</label>
+                <input type="text" name={"gender_pref"} ></input><br></br>
+                <label>Height Preference:</label>
+                <input type="text" name={"height_pref"}></input><br></br>
                 <input type="submit" value="Sign Up"></input>
+                
             </form>
+
+
         </div>
 )}
 

@@ -69,6 +69,7 @@ class PreferenceOption(db.Model, SerializerMixin):
     __tablename__= 'preference_options'
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String, nullable=False)
+    input_type = db.Column(db.String,nullable=False)
     options = db.Column(db.String)
     minval = db.Column(db.Integer)
     maxval = db.Column(db.Integer)

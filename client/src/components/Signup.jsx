@@ -3,6 +3,27 @@ import {useState,useEffect} from "react"
 function Signup(){
     const [error,setError] = useState()
     const [msg, setMsg] = useState()
+    const [prefOptions, setPrefOptions] = useState([])
+
+    useEffect(() => {
+    fetch(`http://127.0.0.1:5555/pref_options`)
+    .then(response => {
+        if (!response.ok){throw new Error('Network response not ok')}
+        else{return response.json()}
+    })
+    .catch(response => response.json())
+    .then(data => {
+        data.map(d => {
+            if(d.options){
+                d['option_array'] = d.options.split(',') 
+            }
+        })
+
+        setPrefOptions(data)
+    })
+    },[])
+
+    console.log(prefOptions)
     
 
     function handleSubmit(event){
@@ -44,27 +65,45 @@ function Signup(){
             {msg ? <p>{msg}</p> : null}
             <form onSubmit = {handleSubmit}>
                 <label>Username:</label>
-                <input type="text" name={"username"}></input><br></br>
+                <input type="text" name={"username"}></input><br/>
                 <label>Image:</label>
-                <input type="text" name={"image"}></input><br></br>
+                <input type="text" name={"image"}></input><br/>
                 <label>Age:</label>
-                <input type="text" name={"age"}></input><br></br>
+                <input type="text" name={"age"}></input><br/>
                 <label>Bio:</label>
-                <input type="text" name={"bio"}></input><br></br>
+                <input type="text" name={"bio"}></input><br/>
                 <label>Gender:</label>
-                <input type="text" name={"gender"} ></input><br></br>
+                <input type="text" name={"gender"} ></input><br/>
                 <label>Height:</label>
-                <input type="text" name={"height"}></input><br></br><br></br>
+                <input type="text" name={"height"}></input><br/><br/>
+
+
                 <label>Preferences:</label><br></br>
-                <label>Gender Preference:</label>
-                <input type="text" name={"gender_pref"} ></input><br></br>
-                <label>Height Preference:</label>
-                <input type="text" name={"height_pref"}></input><br></br>
-                <input type="submit" value="Sign Up"></input>
-                
+                <div>
+                    {prefOptions.map((pref,index) => (
+                        <div key={index}>
+                            <label>{pref.category}</label>
+                            {pref.input_type == "dropdown" ? (
+                                <select name={pref.category}>
+                                   {pref.option_array.map((option,index) => (
+                                    <option key={index} value={option}>
+                                        {option}
+                                    </option>
+                                   ))}
+                                </select>
+                            ) : (
+                                <input type="text" name={pref.category}></input>
+                            )}
+
+                        </div>
+
+                    ))}
+                </div>
+
+
+
             </form>
-
-
+            
         </div>
 )}
 

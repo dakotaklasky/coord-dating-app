@@ -19,6 +19,7 @@ if __name__ == '__main__':
         Match.query.delete()
         Preference.query.delete()
         User.query.delete()
+        PreferenceOption.query.delete()
 
         gender_options = ['Man','Woman']
         users = []
@@ -55,10 +56,24 @@ if __name__ == '__main__':
             likes.append(match_3)
 
         pref_options = []
-        pref_option2 = PreferenceOption(category='Gender',options='Man,Woman,Nonbinary')
-        pref_option3 = PreferenceOption(category='Height',minval=90, maxval=200)
+        pref_option1 = PreferenceOption(category='Gender',input_type='dropdown',options='Man,Woman,Nonbinary')
+        pref_option2 = PreferenceOption(category='Height',input_type='interval',minval=90, maxval=200)
+        pref_option3 = PreferenceOption(category='Age', input_type='interval',minval=18, maxval = 100)
+        pref_option4 = PreferenceOption(category='Ethnicity',input_type='dropdown', options='Black/African Descent,East Asian,Hispanic/Latino,Middle Eastern, Native American,Pacific Islander, South Asian, Southeast Asian, White/Caucasian,Other,Open to all')
+        pref_option5 = PreferenceOption(category='Religion',input_type='dropdown',options='Agnostic,Atheist,Buddhist,Catholic,Christian,Hindu,Jewish,Muslim,Sikh,Spiritual,Other,Open to all')
+        pref_option6 = PreferenceOption(category='Relationship Type',input_type='dropdown', options='Monogamy,Non-monogamy,Figuring out their relationship type,Open to all')
+        pref_option7= PreferenceOption(category='Politics',input_type='dropdown',options='Liberal,Conservative,Agnostic')
+        pref_option8 = PreferenceOption(category='Education',input_type='dropdown',options='High School,Bachelors,Masters,PhD')
+
+        pref_options.append(pref_option1)
         pref_options.append(pref_option2)
         pref_options.append(pref_option3)
+        pref_options.append(pref_option4)
+        pref_options.append(pref_option5)
+        pref_options.append(pref_option6)
+        pref_options.append(pref_option7)
+        pref_options.append(pref_option8)
+
     
   
         db.session.add_all(preferences)

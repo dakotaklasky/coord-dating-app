@@ -10,7 +10,7 @@ import random
 # Local imports
 from config import app, db
 # Add your model imports
-from models import User,Like,Match,Preference
+from models import User,Like,Match,Preference,PreferenceOption
 
 #return user data
 @app.route('/<int:user_id>', methods=['GET'])
@@ -199,9 +199,10 @@ def signup():
     db.session.commit()
     return new_user.to_dict(), 201
 
-
-### test routes in postman
-#add filters
+@app.route('/pref_options',methods=['GET'])
+def pref_options():
+    pref_options = PreferenceOption.query.all()
+    return [p.to_dict() for p in pref_options], 200
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

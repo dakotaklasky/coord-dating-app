@@ -8,13 +8,13 @@ import "./index.css";
 import App from "./App"
 import HomePage from "./pages/HomePage"
 import MatchListPage from "./pages/MatchesListPage"
-import PlanDatePage from "./pages/PlanDatePage"
 import AccountPage from "./pages/AccountPage"
 import MatchProfilePage from "./pages/MatchProfilePage"
 import LoginPage from "./pages/LoginPage"
 import ErrorPage from "./pages/ErrorPage"
 import LogoutPage from "./pages/LogoutPage"
 import SignupPage from "./pages/SignupPage"
+import CalendarPage from "./pages/CalendarPage"
 
 const routes = [
     {
@@ -29,10 +29,6 @@ const routes = [
         {
           path: "/mymatches",
           element: <MatchListPage/>
-        },
-        {
-          path:"/plandate",
-          element: <PlanDatePage/>
         },
         {
           path:"/myaccount",
@@ -53,6 +49,10 @@ const routes = [
         {
           path:"/logout",
           element: <LogoutPage/>
+        },
+        {
+          path:"/calendar",
+          element: <CalendarPage/>
         }
       ]
     }

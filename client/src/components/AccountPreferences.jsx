@@ -1,8 +1,14 @@
 import {useState,useEffect} from "react"
+import PreferenceOptionForm from "./PreferenceOptionForm"
+
 function AccountPreferences(){
 
     const [msg, setMsg] = useState()
     const [defaultPreferences, setDefaultPreferences] = useState([])
+    const [formData, setFormData] = useState([])
+    const [selectedDate,setSelectedDate] = useState(defaultPreferences['age'])
+    const [userInfo,setUserInfo] = useState(false)
+
 
     useEffect( () => {
         fetch(`http://127.0.0.1:5555/mypreferences`,{
@@ -25,19 +31,39 @@ function AccountPreferences(){
         return <p>Please login!</p>
     }
 
-    const pref_list = []
-    for(const i in defaultPreferences){
-        pref_list.push([defaultPreferences[i].pref_category,defaultPreferences[i].pref_value])
+    function getDefaultValue(field){
+        
+      if(field in defaultPreferences){
+            return defaultPreferences[field]
+        }
+        else{
+            return ""
+        }
+    
+    }
+
+    //form data should be default data
+
+    function handleInputChange(event){
+        const name = event.target.name
+        const value = event.target.value
+            setFormData((prevData) => ({
+                ...prevData, [name]:value,
+            }))
+    }
+
+    function dateInputChange(date){
+        setSelectedDate(date)
+        
+        setFormData((prevData) => ({
+            ...prevData, ['date']:date
+        }))
     }
 
     
     function handleSubmit(event){
         event.preventDefault()
 
-        const pref_update = {}
-        for (const j in pref_list){
-            pref_update[pref_list[j][0]]= event.target[pref_list[j][0]].value
-        }
 
         fetch(`http://127.0.0.1:5555/mypreferences`,{
             method: 'PATCH',
@@ -61,7 +87,8 @@ function AccountPreferences(){
     return(
         <div>
             {msg ? <p>{msg}</p> : null}
-            <form onSubmit = {handleSubmit}>
+            <PreferenceOptionForm handleSubmit={handleSubmit} handleInputChange={handleInputChange} dateInputChange={dateInputChange} selectedDate={selectedDate} getDefaultValue={getDefaultValue} userInfo={userInfo}></PreferenceOptionForm>
+            {/* <form onSubmit = {handleSubmit}>
                 {pref_list.map(([category,value]) => (
                     <div key={category}>
                         <label>{category}</label>
@@ -69,7 +96,7 @@ function AccountPreferences(){
                         </div>
                 ))}
                 <input type="submit" value="Update"></input>
-            </form>
+            </form> */}
         </div>
     )
 }

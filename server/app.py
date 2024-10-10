@@ -10,7 +10,7 @@ import random
 # Local imports
 from config import app, db
 # Add your model imports
-from models import User,Like,Match,Preference,PreferenceOption
+from models import User,Like,Match,Preference,PreferenceOption, UserAttribute
 
 #return user data
 @app.route('/<int:user_id>', methods=['GET'])
@@ -46,7 +46,10 @@ def mypreferences():
 
         if request.method == 'GET':
             prefs = user.preferences
-            return [p.to_dict() for p in prefs], 200
+            pref_dict = {}
+            for i in prefs:
+                pref_dict[i.pref_category] = i.pref_value
+            return pref_dict, 200
         if request.method == 'PATCH':
             data = request.get_json()
             for field in data:
@@ -89,13 +92,18 @@ def new_match():
     prev_likes_ids = [p.matchee_id for p in prev_likes]
     prev_likes_ids.append(user_id)
     user_preferences = User.query.filter(User.id == user_id).first().preferences
+
     #create preference dictionary
     pref_dict = {}
     for i in range(0,len(user_preferences)):
         pref_dict[user_preferences[i].pref_category]= user_preferences[i].pref_value
+
+    #create attribute dictionary
+    
     available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
 
-    available_users = User.query.filter(User.id.not_in(prev_likes_ids)).filter(User.gender == pref_dict['Gender']).filter(User.height >= pref_dict['Height']).all()
+    #filter based on pref_dict and user_category and user_value
+    #available_users = User.query.filter(User.id.not_in(prev_likes_ids)).filter(User.attributes == pref_dict['Gender']).filter(User.height >= pref_dict['Height']).all()
     #print(available_users)
     if len(available_users) == 0:
         return {"no_users":"out of users"}, 200
@@ -182,27 +190,48 @@ def user_matches():
 def signup():
     data = request.get_json()
     try:
-        new_user = User(username=data.get('username'),age=data.get('age'), image=data.get('image'),bio=data.get('bio'), gender=data.get('gender'), height=data.get('height'))
+        new_user = User(username=data.get('username'),image=data.get('image'),bio=data.get('bio'))
     except ValueError:
         return {"error":"invalid data"}, 401
     db.session.add(new_user)
     db.session.commit()
 
     user = User.query.filter(User.username == data.get('username')).first()
+
+    data.pop('username')
+    if 'image' in data:
+        data.pop('image')
+    if 'bio' in data:
+        data.pop('bio')
+    
     try:
-        new_pref1 = Preference(user_id=user.id,pref_category='Height',pref_value=data.get('height_pref'))
-        new_pref2 = Preference(user_id=user.id,pref_category='Gender',pref_value=data.get('gender_pref'))
+        for key in data:
+            new_attribute = UserAttribute(user_id=user.id,attribute_category=key,attribute_value=data.get(key))
+            db.session.add(new_attribute)
+            db.session.commit()
     except ValueError:
         return {"error":"invalid data"}, 401
-    db.session.add(new_pref1)
-    db.session.add(new_pref2)
-    db.session.commit()
+
     return new_user.to_dict(), 201
 
 @app.route('/pref_options',methods=['GET'])
 def pref_options():
     pref_options = PreferenceOption.query.all()
     return [p.to_dict() for p in pref_options], 200
+
+@app.route('/user_attributes',methods=['GET'])
+def user_attributes():
+    if 'user_id' in session:
+        user_id = session.get('user_id')
+        user_attributes = UserAttribute.query.filter(UserAttribute.user_id == user_id).all()
+
+        attribute_dict = {}
+        for a in user_attributes:
+            attribute_dict[a.attribute_category] = a.attribute_value
+
+        return attribute_dict, 200
+    else:
+        return {"error":"please login"}, 401
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

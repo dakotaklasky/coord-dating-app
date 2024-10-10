@@ -48,22 +48,21 @@ class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable=False, unique=True)
-    age = db.Column(db.Integer)
     image = db.Column(db.String)
     bio = db.Column(db.String)
-    gender = db.Column(db.String)
-    height = db.Column(db.Integer)
+    birthdate = db.Column(db.String)
 
     preferences = db.relationship('Preference',back_populates='user')
     likes = db.relationship('Like',foreign_keys=[Like.matcher_id],back_populates='matcher_user')
     matches = db.relationship('Match',foreign_keys=[Match.matcher_id],back_populates='matcher_user')
-    serialize_rules = ['-preferences.user','-likes.matcher_user','-matches.matcher_user']
+    attributes = db.relationship('UserAttribute',back_populates='user')
+    serialize_rules = ['-preferences.user','-likes.matcher_user','-matches.matcher_user','-attributes.user']
 
     matchee_likes = association_proxy('likes','matchee_user',creator=lambda matchee_user_obj: Like(matchee_user=matchee_user_obj))
     matchee_matches = association_proxy('matches','matchee_user',creator=lambda matchee_user_obj: Match(matchee_user=matchee_user_obj))
 
     def __repr__(self):
-        return f'<User id:{self.id}, username:{self.username}, age:{self.age}>'
+        return f'<User id:{self.id}, username:{self.username}>'
 
 class PreferenceOption(db.Model, SerializerMixin):
     __tablename__= 'preference_options'
@@ -73,6 +72,23 @@ class PreferenceOption(db.Model, SerializerMixin):
     options = db.Column(db.String)
     minval = db.Column(db.Integer)
     maxval = db.Column(db.Integer)
+
+    def __repr(self):
+        return f'<PreferenceOption id:{self.id}, category:{self.category}>'
+
+class UserAttribute(db.Model, SerializerMixin):
+    __tablename__= 'user_attributes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id'), nullable=False)
+    attribute_category = db.Column(db.String, nullable=False)
+    attribute_value = db.Column(db.String)
+
+    user = db.relationship('User', back_populates='attributes')
+    serialize_rules = ['-user']
+
+    def __repr__(self):
+        return f'<UserAttribute id:{self.id}, category:{self.attribute_category}, value: {self.attribute_value}>'
+
 
 
 

@@ -8,7 +8,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import db, User, Like, Match, Preference, PreferenceOption
+from models import db, User, Like, Match, Preference, PreferenceOption, UserAttribute
 
 if __name__ == '__main__':
     fake = Faker()
@@ -20,11 +20,11 @@ if __name__ == '__main__':
         Preference.query.delete()
         User.query.delete()
         PreferenceOption.query.delete()
+        UserAttribute.query.delete()
 
-        gender_options = ['Man','Woman']
         users = []
         for i in range(0,100):
-            user = User(username = fake.name(),age = fake.random_int(min=18, max=65),bio = fake.text(), image = fake.image_url(250,250), gender=gender_options[fake.random_int(min=0,max=1)], height=fake.random_int(min=150, max=200))
+            user = User(username = fake.name(),bio = fake.text(), image = fake.image_url(250,250), birthdate = fake.date_time().isoformat() )
             users.append(user)
 
         db.session.add_all(users)
@@ -33,12 +33,46 @@ if __name__ == '__main__':
         preferences = []
         likes = []
         matches = []
+        user_attributes = []
+
+        gender_options = ['Man','Woman','Nonbinary']
+        height_options = PreferenceOption(category='Height',input_type='interval',minval=90, maxval=200)
+        age_options = PreferenceOption(category='Age', input_type='date',minval=18, maxval = 100)
+        ethnicity_options = ['Black/African Descent','East Asian','Hispanic/Latino','Middle Eastern', 'Native American','Pacific Islander', 'South Asian', 'Southeast Asian', 'White/Caucasian','Other']
+        religion_options = ['Agnostic','Atheist','Buddhist','Catholic','Christian','Hindu','Jewish','Muslim','Sikh','Spiritual','Other']
+        relationship_options = ['Monogamy','Non-monogamy','Figuring out their relationship type']
+        politics_options = ['Liberal','Conservative','Moderate','Agnostic']
+        education_options = ['High School','Bachelors','Masters','PhD']
 
         for k in range(0,100):
-            preference_1 = Preference(user_id=k,pref_category='Gender', pref_value=gender_options[fake.random_int(min=0,max=1)])
-            preference_2 = Preference(user_id=k,pref_category='Height',pref_value=str(fake.random_int(min=150, max=200)))
+            preference_1 = Preference(user_id=k,pref_category='Gender', pref_value=gender_options[fake.random_int(min=0,max=2)])
+            preference_2 = Preference(user_id=k,pref_category='Height',pref_value=fake.random_int(min=150, max=200))
+            preference_3 = Preference(user_id=k,pref_category='Age',pref_value=fake.random_int(min=18, max=100))
+            preference_6 = Preference(user_id=k,pref_category='Relationship',pref_value=relationship_options[fake.random_int(min=0,max=2)])
+            preference_7 = Preference(user_id=k,pref_category='Politics',pref_value=politics_options[fake.random_int(min=0,max=3)])
             preferences.append(preference_1)
             preferences.append(preference_2)
+            preferences.append(preference_3)
+            preferences.append(preference_6)
+            preferences.append(preference_7)
+             
+            attribute_1 = UserAttribute(user_id=k,attribute_category='Gender', attribute_value=gender_options[fake.random_int(min=0,max=2)])
+            attribute_2 = UserAttribute(user_id=k,attribute_category='Height',attribute_value=fake.random_int(min=150, max=200))
+            attribute_3 = UserAttribute(user_id=k,attribute_category='Age',attribute_value=fake.random_int(min=18, max=100))
+            attribute_4 = UserAttribute(user_id=k,attribute_category='Ethnicity',attribute_value=ethnicity_options[fake.random_int(min=0,max=9)])
+            attribute_5 = UserAttribute(user_id=k,attribute_category='Religion',attribute_value=religion_options[fake.random_int(min=0,max=10)])
+            attribute_6 = UserAttribute(user_id=k,attribute_category='Relationship',attribute_value=relationship_options[fake.random_int(min=0,max=2)])
+            attribute_7 = UserAttribute(user_id=k,attribute_category='Politics',attribute_value=politics_options[fake.random_int(min=0,max=3)])
+            attribute_8 = UserAttribute(user_id=k,attribute_category='Education',attribute_value=education_options[fake.random_int(min=0,max=3)])
+            user_attributes.append(attribute_1)
+            user_attributes.append(attribute_2)
+            user_attributes.append(attribute_3)
+            user_attributes.append(attribute_4)
+            user_attributes.append(attribute_5)
+            user_attributes.append(attribute_6)
+            user_attributes.append(attribute_7)
+            user_attributes.append(attribute_8)
+           
 
         for j in range(1,80):       
             like_1 = Like(matcher_id=j,matchee_id=j+2,accepted=-1)
@@ -59,10 +93,10 @@ if __name__ == '__main__':
         pref_option1 = PreferenceOption(category='Gender',input_type='dropdown',options='Man,Woman,Nonbinary')
         pref_option2 = PreferenceOption(category='Height',input_type='interval',minval=90, maxval=200)
         pref_option3 = PreferenceOption(category='Age', input_type='interval',minval=18, maxval = 100)
-        pref_option4 = PreferenceOption(category='Ethnicity',input_type='dropdown', options='Black/African Descent,East Asian,Hispanic/Latino,Middle Eastern, Native American,Pacific Islander, South Asian, Southeast Asian, White/Caucasian,Other,Open to all')
-        pref_option5 = PreferenceOption(category='Religion',input_type='dropdown',options='Agnostic,Atheist,Buddhist,Catholic,Christian,Hindu,Jewish,Muslim,Sikh,Spiritual,Other,Open to all')
-        pref_option6 = PreferenceOption(category='Relationship Type',input_type='dropdown', options='Monogamy,Non-monogamy,Figuring out their relationship type,Open to all')
-        pref_option7= PreferenceOption(category='Politics',input_type='dropdown',options='Liberal,Conservative,Agnostic')
+        pref_option4 = PreferenceOption(category='Ethnicity',input_type='dropdown', options='Black/African Descent,East Asian,Hispanic/Latino,Middle Eastern, Native American,Pacific Islander, South Asian, Southeast Asian, White/Caucasian,Other')
+        pref_option5 = PreferenceOption(category='Religion',input_type='dropdown',options='Agnostic,Atheist,Buddhist,Catholic,Christian,Hindu,Jewish,Muslim,Sikh,Spiritual,Other')
+        pref_option6 = PreferenceOption(category='Relationship',input_type='dropdown', options='Monogamy,Non-monogamy,Figuring out their relationship type')
+        pref_option7= PreferenceOption(category='Politics',input_type='dropdown',options='Liberal,Conservative,Moderate,Agnostic')
         pref_option8 = PreferenceOption(category='Education',input_type='dropdown',options='High School,Bachelors,Masters,PhD')
 
         pref_options.append(pref_option1)
@@ -74,12 +108,15 @@ if __name__ == '__main__':
         pref_options.append(pref_option7)
         pref_options.append(pref_option8)
 
+      
+
     
   
         db.session.add_all(preferences)
         db.session.add_all(likes)
         db.session.add_all(matches)
         db.session.add_all(pref_options)
+        db.session.add_all(user_attributes)
         db.session.commit()
 
 

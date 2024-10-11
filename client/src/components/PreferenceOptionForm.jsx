@@ -3,7 +3,7 @@ import MultiRangeSlider from "multi-range-slider-react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 
-function PreferenceOptionForm({handleSubmit,handleInputChange, dateInputChange,selectedDate,getDefaultValue,userInfo}){
+function PreferenceOptionForm({handleSubmit,handleInputChange, dateInputChange,selectedDate,getDefaultValue,userInfo, handleSliderChange}){
     const [error,setError] = useState()
     const [prefOptions, setPrefOptions] = useState([])
 
@@ -49,12 +49,14 @@ function PreferenceOptionForm({handleSubmit,handleInputChange, dateInputChange,s
                 (<div>
                 <label>Username:</label>
                 <input type="text" name={"username"} onChange={handleInputChange} defaultValue={getDefaultValue("username")}></input><br/>
+                <label>Password:</label>
+                <input type="password" name={"password"} onChange={handleInputChange}></input><br/>
                 <label>Image:</label>
                 <input type="text" name={"image"} onChange={handleInputChange} defaultValue={getDefaultValue("image")}></input><br/>
                 <label>Bio:</label>
-                <input type="text" name={"bio"} onChange={handleInputChange} defaultValue={getDefaultValue("bio")}></input><br/>
-                <label>Birthdate:</label>
-                <DatePicker maxDate={maximumDate} selected={selectedDate} onChange={dateInputChange} defaultValue={getDefaultValue("birthdate")}/>
+                <input type="text" name={"bio"} onChange={handleInputChange} defaultValue={getDefaultValue("bio")}></input><br/><br/>
+                {/* <label>Birthdate:</label>
+                <DatePicker maxDate={maximumDate} selected={selectedDate} onChange={dateInputChange} defaultValue={getDefaultValue("birthdate")}/> */}
                 </div>) :
                 (<div></div>)}
                 <div>
@@ -71,7 +73,11 @@ function PreferenceOptionForm({handleSubmit,handleInputChange, dateInputChange,s
                                    ))}
                                 </select>
                                 //replace with slider
-                            ) : (<input type="text" name={pref.category} onChange={handleInputChange} defaultValue={getDefaultValue(pref.category)}></input>)
+                            ) : (
+                                userInfo ? 
+                            (<input type="text" name={pref.category} onChange={handleInputChange} defaultValue={getDefaultValue(pref.category)}></input>):
+                            (<MultiRangeSlider name={pref.category} min={pref.minval} max={pref.maxval} onChange={handleSliderChange} minValue={getDefaultValue(pref.category) ? Math.min(getDefaultValue(pref.category)) : ""} maxValue={getDefaultValue(pref.category) ? Math.max(getDefaultValue(pref.category)) : ""}/>)
+                                )
                                 }
                         </div>
                     ))}

@@ -13,15 +13,14 @@ function Signup(){
         const value = event.target.value
             setFormData((prevData) => ({
                 ...prevData, [name]:value,
-            }))
-        
+            }))  
     }
 
-    function dateInputChange(date){
-        setSelectedDate(date)
+    function dateInputChange(event){
+        setSelectedDate(new Date(event.date))
         
         setFormData((prevData) => ({
-            ...prevData, ['date']:date
+            ...prevData, ['birthdate']:date
         }))
     }
 
@@ -50,7 +49,7 @@ function Signup(){
     }
 
     function getDefaultValue(){
-        return ""
+     
     }
 
     return (

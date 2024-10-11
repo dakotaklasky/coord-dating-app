@@ -67,12 +67,17 @@ def login():
     data = request.get_json()
     username = data.get('username')
     user = User.query.filter(User.username == username).first()
-    if user:
-        session['user_id'] = user.id
-        print(user.id)
-        return user.to_dict(), 200  
+    
+    if not user:
+        return {'error': 'user not found'}, 404
+    
+    if not user.authenticate(data.get('password')):
+        return {'error':'invalid password'}, 401
+    
     else:
-        return {'error':'login failed'},401
+        session['user_id'] = user.id
+        return user.to_dict(), 200  
+
 
 @app.route('/logout',methods=['DELETE'])
 def logout():
@@ -191,6 +196,7 @@ def signup():
     data = request.get_json()
     try:
         new_user = User(username=data.get('username'),image=data.get('image'),bio=data.get('bio'))
+        new_user.password_hash = data.get('password')
     except ValueError:
         return {"error":"invalid data"}, 401
     db.session.add(new_user)
@@ -199,6 +205,7 @@ def signup():
     user = User.query.filter(User.username == data.get('username')).first()
 
     data.pop('username')
+    data.pop('password')
     if 'image' in data:
         data.pop('image')
     if 'bio' in data:
@@ -232,6 +239,14 @@ def user_attributes():
         return attribute_dict, 200
     else:
         return {"error":"please login"}, 401
+
+# @app.route('/isloggedin',methods=['GET'])
+# def isloggedin():
+#     if 'user_id' in session:
+#         return {"logged in":"true"}, 200
+#     else:
+#         return {"logged in": "false"}, 401
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

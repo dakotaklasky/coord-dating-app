@@ -19,10 +19,10 @@ function EditProfile(){
     }
 
     function dateInputChange(date){
-        setSelectedDate(date)
+        setSelectedDate(new Date(date))
         
         setFormData((prevData) => ({
-            ...prevData, ['date']:date
+            ...prevData, ['birthdate']:date
         }))
     }
 
@@ -68,15 +68,11 @@ function EditProfile(){
     },[]) 
 
     function getDefaultValue(field){
-        
         if(field in defaultUserData){
             return defaultUserData[field]
         }
         else if(field in defaultAttributeData){
             return defaultAttributeData[field]
-        }
-        else{
-            return ""
         }
     
     }

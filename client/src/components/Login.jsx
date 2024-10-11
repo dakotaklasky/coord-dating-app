@@ -18,7 +18,8 @@ function Login(){
             },
             credentials: 'include',
             body: JSON.stringify({
-                'username': event.target.username.value
+                'username': event.target.username.value,
+                'password': event.target.password.value
             })
         })
         .then(response => {
@@ -40,7 +41,9 @@ function Login(){
             {errorElement}
             <form onSubmit = {handleSubmit}>
                 <label>Username:</label>
-                <input type="text" name={"username"}></input>
+                <input type="text" name={"username"}></input><br/>
+                <label>Password:</label>
+                <input type="password" name="password"></input><br/>
                 <input type="submit" value="Login"></input>
             </form>
         </div>

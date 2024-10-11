@@ -33,16 +33,12 @@ function AccountPreferences(){
 
     function getDefaultValue(field){
         
-      if(field in defaultPreferences){
+        if(field in defaultPreferences){
             return defaultPreferences[field]
-        }
-        else{
-            return ""
-        }
-    
-    }
+            }
 
-    //form data should be default data
+        
+    }
 
     function handleInputChange(event){
         const name = event.target.name
@@ -50,6 +46,15 @@ function AccountPreferences(){
             setFormData((prevData) => ({
                 ...prevData, [name]:value,
             }))
+    }
+
+    function handleSliderChange(event){
+        const name = event.name
+        const minval = event.minValue
+        const maxval = event.maxValue
+        setFormData((prevData) => ({
+            ...prevData, [name]:minval, [name]: maxval,
+        }))
     }
 
     function dateInputChange(date){
@@ -87,16 +92,7 @@ function AccountPreferences(){
     return(
         <div>
             {msg ? <p>{msg}</p> : null}
-            <PreferenceOptionForm handleSubmit={handleSubmit} handleInputChange={handleInputChange} dateInputChange={dateInputChange} selectedDate={selectedDate} getDefaultValue={getDefaultValue} userInfo={userInfo}></PreferenceOptionForm>
-            {/* <form onSubmit = {handleSubmit}>
-                {pref_list.map(([category,value]) => (
-                    <div key={category}>
-                        <label>{category}</label>
-                        <input type="text" name={category} defaultValue = {value}></input>
-                        </div>
-                ))}
-                <input type="submit" value="Update"></input>
-            </form> */}
+            <PreferenceOptionForm handleSubmit={handleSubmit} handleInputChange={handleInputChange} dateInputChange={dateInputChange} selectedDate={selectedDate} getDefaultValue={getDefaultValue} userInfo={userInfo} handleSliderChange={handleSliderChange}></PreferenceOptionForm>
         </div>
     )
 }

@@ -2,6 +2,7 @@
 
 # Standard library imports
 from random import randint, choice as rc
+from datetime import date
 
 # Remote library imports
 from faker import Faker
@@ -22,9 +23,18 @@ if __name__ == '__main__':
         PreferenceOption.query.delete()
         UserAttribute.query.delete()
 
+        unique_first_names = set()  # Use a set to ensure uniqueness
+
+        while len(unique_first_names) < 100:
+            unique_first_names.add(fake.first_name())
+
+        # Convert the set to a list if needed
+        unique_first_names_list = list(unique_first_names)
+
         users = []
         for i in range(0,100):
-            user = User(username = fake.name(),bio = fake.text(), image = fake.image_url(250,250), birthdate = fake.date_time().isoformat() )
+            user = User(username = unique_first_names_list[i],bio = fake.text(), image = fake.image_url(250,250), birthdate = fake.date_between(start_date=date(1944,1,1), end_date=date(2005,12,31)).isoformat() )
+            user.password_hash = user.username + 'password'
             users.append(user)
 
         db.session.add_all(users)

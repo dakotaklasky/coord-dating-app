@@ -11,8 +11,8 @@ import MatchListPage from "./pages/MatchesListPage"
 import AccountPage from "./pages/AccountPage"
 import MatchProfilePage from "./pages/MatchProfilePage"
 import LoginPage from "./pages/LoginPage"
-import ErrorPage from "./pages/ErrorPage"
 import LogoutPage from "./pages/LogoutPage"
+import ErrorPage from "./pages/ErrorPage"
 import SignupPage from "./pages/SignupPage"
 import CalendarPage from "./pages/CalendarPage"
 
@@ -43,12 +43,12 @@ const routes = [
           element: <LoginPage/>
         },
         {
-          path:"/signup",
-          element:<SignupPage/>
-        },
-        {
           path:"/logout",
           element: <LogoutPage/>
+        },
+        {
+          path:"/signup",
+          element:<SignupPage/>
         },
         {
           path:"/calendar",

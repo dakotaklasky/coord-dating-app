@@ -57,7 +57,6 @@ class User(db.Model, SerializerMixin):
 
     image = db.Column(db.String)
     bio = db.Column(db.String)
-    birthdate = db.Column(db.String)
 
     preferences = db.relationship('Preference',back_populates='user')
     likes = db.relationship('Like',foreign_keys=[Like.matcher_id],back_populates='matcher_user')
@@ -106,7 +105,7 @@ class UserAttribute(db.Model, SerializerMixin):
     serialize_rules = ['-user']
 
     def __repr__(self):
-        return f'<UserAttribute id:{self.id}, category:{self.attribute_category}, value: {self.attribute_value}>'
+        return f'<UserAttribute user_id:{self.user_id}, category:{self.attribute_category}, value: {self.attribute_value}>'
 
 
 

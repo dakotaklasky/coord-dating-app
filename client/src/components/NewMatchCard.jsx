@@ -11,6 +11,7 @@ import {useState,useEffect} from "react"
 function NewMatchCard(){
 
     const [user, setUser] = useState([])
+    const [userAttributeDict, setUserAttributeDict] = useState([])
 
     useEffect(() =>{
         fetch("http://127.0.0.1:5555/new_match",{
@@ -26,8 +27,25 @@ function NewMatchCard(){
             else{return response.json()}
         })
         .catch(error =>{console.error('There was a problem')})
-        .then(json => setUser(json))
+        .then(json => {
+            setUser(json)
+
+            const attribute_dict = {}
+            for(const row in json.attributes)
+                attribute_dict[json.attributes[row].attribute_category] = json.attributes[row].attribute_value
+            
+            setUserAttributeDict(attribute_dict)
+        })
+
     }, [])
+
+    function createAttributeDict(){
+        const attribute_dict = {}
+        for(const row in userAttributes)
+            attribute_dict[row.attribute_category] = row.attribute_value
+        
+        setUserAttributeDict(attribute_dict)
+    }
 
     if (!user){
         return <p>Please login!</p>
@@ -71,7 +89,15 @@ function NewMatchCard(){
             else{return response.json()}
         })
         .catch(error =>{console.error('There was a problem')})
-        .then(json => setUser(json))
+        .then(json => {
+            setUser(json)
+
+            const attribute_dict = {}
+            for(const row in json.attributes)
+                attribute_dict[json.attributes[row].attribute_category] = json.attributes[row].attribute_value
+            
+            setUserAttributeDict(attribute_dict)
+        })
 
     }
 
@@ -114,17 +140,43 @@ function NewMatchCard(){
             else{return response.json()}
         })
         .catch(error =>{console.error('There was a problem')})
-        .then(json => setUser(json))
+        .then(json => {
+            setUser(json)
+            const attribute_dict = {}
+            for(const row in json.attributes)
+                attribute_dict[json.attributes[row].attribute_category] = json.attributes[row].attribute_value
+            
+            setUserAttributeDict(attribute_dict)
+        })
         
     }
+
+    function calculateAge(birthDate) {
+        const today = new Date();
+        const birthDateObj = new Date(birthDate);
+      
+        let age = today.getFullYear() - birthDateObj.getFullYear();
+        const monthDiff = today.getMonth() - birthDateObj.getMonth();
+      
+        // If the birthday hasn't happened this year, subtract 1
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+          age--;
+        }
+      
+        return String(age);
+      }
 
     return(
         <Card sx={{maxWidth: 800}}>
             <CardContent>
                 <img src={user.image} alt="User Profile Picture"/>
                 <h2>{user.username}</h2>
-                <p>{user.age} | {user.gender} | {user.height}cm</p>
                 <p>{user.bio}</p>
+                {Object.entries(userAttributeDict).map(([key,value]) => (
+                    key == "Birthdate" ?
+                    <p key={key}>{calculateAge(value)}</p> :
+                    <p key={key}>{value}</p>
+                ))}
             </CardContent>
             <CardActions>
                 <Button id="dislike" onClick = {handleDislike}>❌</Button>

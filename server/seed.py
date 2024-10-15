@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
         users = []
         for i in range(0,100):
-            user = User(username = unique_first_names_list[i],bio = fake.text(), image = fake.image_url(250,250), birthdate = fake.date_between(start_date=date(1944,1,1), end_date=date(2005,12,31)).isoformat() )
+            user = User(username = unique_first_names_list[i],bio = fake.text(), image = fake.image_url(250,250))
             user.password_hash = user.username + 'password'
             users.append(user)
 
@@ -54,21 +54,25 @@ if __name__ == '__main__':
         politics_options = ['Liberal','Conservative','Moderate','Agnostic']
         education_options = ['High School','Bachelors','Masters','PhD']
 
-        for k in range(0,100):
+        for k in range(1,101):
             preference_1 = Preference(user_id=k,pref_category='Gender', pref_value=gender_options[fake.random_int(min=0,max=2)])
-            preference_2 = Preference(user_id=k,pref_category='Height',pref_value=fake.random_int(min=150, max=200))
-            preference_3 = Preference(user_id=k,pref_category='Age',pref_value=fake.random_int(min=18, max=100))
-            preference_6 = Preference(user_id=k,pref_category='Relationship',pref_value=relationship_options[fake.random_int(min=0,max=2)])
-            preference_7 = Preference(user_id=k,pref_category='Politics',pref_value=politics_options[fake.random_int(min=0,max=3)])
+            # preference_2 = Preference(user_id=k,pref_category='Height',pref_value=fake.random_int(min=90, max=100))
+            preference_3 = Preference(user_id=k,pref_category='Age',pref_value=fake.random_int(min=18, max=30))
+            # preference_4 = Preference(user_id=k,pref_category='Height',pref_value=fake.random_int(min=150, max=200))
+            preference_5 = Preference(user_id=k,pref_category='Age',pref_value=fake.random_int(min=31, max=100))
+            # preference_6 = Preference(user_id=k,pref_category='Relationship',pref_value=relationship_options[fake.random_int(min=0,max=2)])
+            #preference_7 = Preference(user_id=k,pref_category='Politics',pref_value=politics_options[fake.random_int(min=0,max=3)])
             preferences.append(preference_1)
-            preferences.append(preference_2)
+            # preferences.append(preference_2)
             preferences.append(preference_3)
-            preferences.append(preference_6)
-            preferences.append(preference_7)
+            # preferences.append(preference_4)
+            preferences.append(preference_5)
+            # preferences.append(preference_6)
+            #preferences.append(preference_7)
              
             attribute_1 = UserAttribute(user_id=k,attribute_category='Gender', attribute_value=gender_options[fake.random_int(min=0,max=2)])
             attribute_2 = UserAttribute(user_id=k,attribute_category='Height',attribute_value=fake.random_int(min=150, max=200))
-            attribute_3 = UserAttribute(user_id=k,attribute_category='Age',attribute_value=fake.random_int(min=18, max=100))
+            attribute_3 = UserAttribute(user_id=k,attribute_category='Birthdate', attribute_value=fake.date_between(start_date=date(1944,1,1), end_date=date(2005,12,31)).isoformat() )
             attribute_4 = UserAttribute(user_id=k,attribute_category='Ethnicity',attribute_value=ethnicity_options[fake.random_int(min=0,max=9)])
             attribute_5 = UserAttribute(user_id=k,attribute_category='Religion',attribute_value=religion_options[fake.random_int(min=0,max=10)])
             attribute_6 = UserAttribute(user_id=k,attribute_category='Relationship',attribute_value=relationship_options[fake.random_int(min=0,max=2)])

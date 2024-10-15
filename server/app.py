@@ -5,6 +5,9 @@
 # Remote library imports
 from flask import Flask, request, session
 import random
+from sqlalchemy import select
+from datetime import date,timedelta
+from sqlalchemy.orm import class_mapper
 
 
 # Local imports
@@ -23,15 +26,31 @@ def myaccount():
     if 'user_id' in session:
         user_id = session.get('user_id')
         user = User.query.filter(User.id == user_id).first()
+        user_attribute_fields = []
+        for i in user.attributes:
+            user_attribute_fields.append(i.attribute_category)
 
         if request.method == 'GET':
             return user.to_dict(), 200
 
         elif request.method == 'PATCH':
             data = request.get_json()
+
+            user_info = [column.key for column in class_mapper(User).columns]
             for field in data:
-                setattr(user,field,data[field])
-            db.session.add(user)
+                if field in user_info:
+                    setattr(user,field,data[field])
+                    db.session.add(user)
+                else:
+                    #test if attribute exists
+                    if field in user_attribute_fields:
+                        current_attribute = UserAttribute.query.filter(UserAttribute.user_id == user_id).filter(UserAttribute.attribute_category == field).first()
+                        current_attribute.attribute_value = data[field]
+                        db.session.add(current_attribute)
+                    else:
+                        user_attribute = UserAttribute(field,data[field])
+                        db.session.add(user_attribute)
+            
             db.session.commit()
 
             return user.to_dict(), 200
@@ -48,14 +67,32 @@ def mypreferences():
             prefs = user.preferences
             pref_dict = {}
             for i in prefs:
-                pref_dict[i.pref_category] = i.pref_value
+                if i.pref_category in pref_dict:
+                    pref_dict[i.pref_category].append(i.pref_value)
+                else:
+                    pref_dict[i.pref_category] = [i.pref_value]
             return pref_dict, 200
         if request.method == 'PATCH':
             data = request.get_json()
+            print(data)
             for field in data:
                 pref = Preference.query.filter(Preference.user_id == user_id).filter(Preference.pref_category == field).first()
-                pref.pref_value = data[field]
-                db.session.add(pref)
+                print(data[field])
+                if pref:
+                    if len(data[field]) > 1:
+                        prefs = Preference.query.filter(Preference.user_id == user_id).filter(Preference.pref_category == field).all()
+                        pref1 = prefs[0]
+                        pref2 = prefs[1]
+                        pref1.pref_value = data[field][0]
+                        pref2.pref_value = data[field][1]
+                        db.session.add(pref1)
+                        db.session.add(pref2)
+                    else:
+                        pref.pref_value = data[field][0]
+                        db.session.add(pref)
+                else:
+                        new_pref = Preference(user_id = user_id, pref_category=field, pref_value = data[field][0])
+                        db.session.add(new_pref)
             db.session.commit()
             return [p.to_dict() for p in Preference.query.filter(Preference.user_id == user_id).all()], 200
     else:
@@ -101,26 +138,60 @@ def new_match():
     #create preference dictionary
     pref_dict = {}
     for i in range(0,len(user_preferences)):
-        pref_dict[user_preferences[i].pref_category]= user_preferences[i].pref_value
+        if user_preferences[i].pref_category in pref_dict:
+            pref_dict[user_preferences[i].pref_category].append(user_preferences[i].pref_value)
+        else:
+            pref_dict[user_preferences[i].pref_category]= [user_preferences[i].pref_value]
 
-    #create attribute dictionary
     
-    available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
+    #available_users = User.query.filter(User.id.not_in(prev_likes_ids)).all()
 
-    #filter based on pref_dict and user_category and user_value
-    #available_users = User.query.filter(User.id.not_in(prev_likes_ids)).filter(User.attributes == pref_dict['Gender']).filter(User.height >= pref_dict['Height']).all()
-    #print(available_users)
-    if len(available_users) == 0:
+    query = db.session.query(UserAttribute)
+
+    for j in pref_dict:
+
+        if len(pref_dict[j])> 1:
+            min_val = min(pref_dict[j])
+            max_val = max(pref_dict[j])
+
+            if j == 'Age':
+                min_bday = (date.today()- timedelta(days=int(min_val)*365)).isoformat()
+                max_bday = (date.today()- timedelta(days=int(max_val)*365)).isoformat()
+
+                subquery = (
+                select(UserAttribute.user_id)
+                .where(UserAttribute.attribute_category == "Birthdate")
+                .where(UserAttribute.attribute_value <= min_bday)
+                .where(UserAttribute.attribute_value >= max_bday)
+                )
+
+            else:
+                subquery = (
+                select(UserAttribute.user_id)
+                .where(UserAttribute.attribute_category == j)
+                .where(UserAttribute.attribute_value <= max_val)
+                .where(UserAttribute.attribute_value >= min_val)
+                )
+
+        else:
+            subquery = (
+            select(UserAttribute.user_id)
+            .where(UserAttribute.attribute_category == j)
+            .where(UserAttribute.attribute_value == pref_dict[j][0])
+            )
+        query = query.filter(UserAttribute.user_id.not_in(prev_likes_ids)).filter(UserAttribute.user_id.in_(subquery))
+
+    user_attributes = query.all()
+    available_users = [a.user for a in user_attributes]
+
+    if not available_users:
         return {"no_users":"out of users"}, 200
     else:
         return available_users[0].to_dict(), 200
 
 @app.route('/like', methods = ['POST'])
 def user_like():
-    #post like data
-    #if a match is created add to match table
-    #if no match return nothing
-    #if match return match
+
 
     if 'user_id' in session:
         user_id = session.get('user_id')
@@ -204,8 +275,11 @@ def signup():
 
     user = User.query.filter(User.username == data.get('username')).first()
 
+    #need to make not manual for if you add fields to user info
     data.pop('username')
     data.pop('password')
+    if 'birthdate' in data:
+        data.pop("birthdate")
     if 'image' in data:
         data.pop('image')
     if 'bio' in data:

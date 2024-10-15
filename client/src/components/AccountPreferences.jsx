@@ -4,9 +4,7 @@ import PreferenceOptionForm from "./PreferenceOptionForm"
 function AccountPreferences(){
 
     const [msg, setMsg] = useState()
-    const [defaultPreferences, setDefaultPreferences] = useState([])
     const [formData, setFormData] = useState([])
-    const [selectedDate,setSelectedDate] = useState(defaultPreferences['age'])
     const [userInfo,setUserInfo] = useState(false)
 
 
@@ -24,20 +22,17 @@ function AccountPreferences(){
             else{return response.json()}
         })
         .catch(error =>{console.error('There was a problem')})
-        .then(json => setDefaultPreferences(json))
+        .then(json => setFormData(json))
     }, [])  
 
-    if (!defaultPreferences){
+    if (!formData){
         return <p>Please login!</p>
     }
 
     function getDefaultValue(field){
-        
-        if(field in defaultPreferences){
-            return defaultPreferences[field]
+        if(field in formData){
+            return formData[field]
             }
-
-        
     }
 
     function handleInputChange(event){
@@ -57,18 +52,9 @@ function AccountPreferences(){
         }))
     }
 
-    function dateInputChange(date){
-        setSelectedDate(date)
-        
-        setFormData((prevData) => ({
-            ...prevData, ['date']:date
-        }))
-    }
-
     
     function handleSubmit(event){
         event.preventDefault()
-
 
         fetch(`http://127.0.0.1:5555/mypreferences`,{
             method: 'PATCH',
@@ -77,7 +63,7 @@ function AccountPreferences(){
                 "Accept": 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify(pref_update)
+            body: JSON.stringify(formData)
         })
         .then(response => {
             if (response.ok){setMsg('Update successful')}
@@ -92,7 +78,7 @@ function AccountPreferences(){
     return(
         <div>
             {msg ? <p>{msg}</p> : null}
-            <PreferenceOptionForm handleSubmit={handleSubmit} handleInputChange={handleInputChange} dateInputChange={dateInputChange} selectedDate={selectedDate} getDefaultValue={getDefaultValue} userInfo={userInfo} handleSliderChange={handleSliderChange}></PreferenceOptionForm>
+            <PreferenceOptionForm handleSubmit={handleSubmit} handleInputChange={handleInputChange} getDefaultValue={getDefaultValue} userInfo={userInfo} handleSliderChange={handleSliderChange}></PreferenceOptionForm>
         </div>
     )
 }

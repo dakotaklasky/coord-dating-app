@@ -5,7 +5,6 @@ function Signup(){
     const [error,setError] = useState()
     const [msg, setMsg] = useState()
     const [formData, setFormData] = useState({})
-    const [selectedDate,setSelectedDate] = useState()
     const [userInfo, setUserInfo] = useState(true)
     
     function handleInputChange(event){
@@ -14,14 +13,6 @@ function Signup(){
             setFormData((prevData) => ({
                 ...prevData, [name]:value,
             }))  
-    }
-
-    function dateInputChange(event){
-        setSelectedDate(new Date(event.date))
-        
-        setFormData((prevData) => ({
-            ...prevData, ['birthdate']:date
-        }))
     }
 
     function handleSubmit(event){
@@ -55,7 +46,7 @@ function Signup(){
     return (
         <div>
             {msg ? <p>{msg}</p> : null}
-            <PreferenceOptionForm handleSubmit={handleSubmit} handleInputChange={handleInputChange} dateInputChange={dateInputChange} selectedDate={selectedDate} getDefaultValue={getDefaultValue} userInfo={userInfo}></PreferenceOptionForm>
+            <PreferenceOptionForm handleSubmit={handleSubmit} handleInputChange={handleInputChange} getDefaultValue={getDefaultValue} userInfo={userInfo}></PreferenceOptionForm>
         </div>
 
 )}

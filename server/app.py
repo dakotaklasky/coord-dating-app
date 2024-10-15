@@ -77,7 +77,6 @@ def mypreferences():
             print(data)
             for field in data:
                 pref = Preference.query.filter(Preference.user_id == user_id).filter(Preference.pref_category == field).first()
-                print(data[field])
                 if pref:
                     if len(data[field]) > 1:
                         prefs = Preference.query.filter(Preference.user_id == user_id).filter(Preference.pref_category == field).all()
@@ -91,8 +90,14 @@ def mypreferences():
                         pref.pref_value = data[field][0]
                         db.session.add(pref)
                 else:
-                        new_pref = Preference(user_id = user_id, pref_category=field, pref_value = data[field][0])
-                        db.session.add(new_pref)
+                        if len(data[field]) > 1:
+                            new_pref1 = Preference(user_id = user_id, pref_category=field, pref_value = data[field][0])
+                            new_pref2 = Preference(user_id = user_id, pref_category=field, pref_value = data[field][1])
+                            db.session.add(new_pref1)
+                            db.session.add(new_pref2)
+                        else:
+                            new_pref = Preference(user_id = user_id, pref_category=field, pref_value = data[field][0])
+                            db.session.add(new_pref)
             db.session.commit()
             return [p.to_dict() for p in Preference.query.filter(Preference.user_id == user_id).all()], 200
     else:
@@ -300,17 +305,26 @@ def pref_options():
     pref_options = PreferenceOption.query.all()
     return [p.to_dict() for p in pref_options], 200
 
-@app.route('/user_attributes',methods=['GET'])
+@app.route('/user_attributes',methods=['GET', 'PATCH'])
 def user_attributes():
     if 'user_id' in session:
         user_id = session.get('user_id')
-        user_attributes = UserAttribute.query.filter(UserAttribute.user_id == user_id).all()
+        if request.method == "GET":
+            user_attributes = UserAttribute.query.filter(UserAttribute.user_id == user_id).all()
 
-        attribute_dict = {}
-        for a in user_attributes:
-            attribute_dict[a.attribute_category] = a.attribute_value
+            attribute_dict = {}
+            for a in user_attributes:
+                attribute_dict[a.attribute_category] = a.attribute_value
 
-        return attribute_dict, 200
+            return attribute_dict, 200
+        if request.method == 'PATCH':
+            data = request.get_json()
+            for field in data:
+                for i in range(0,len(data[field])):
+                    new_attribute = UserAttribute(user_id = user_id, attribute_category = field, attribute_value = data[field][i])
+                    db.session.add(new_attribute)
+            db.session.commit()
+            return new_attribute.to_dict(), 200
     else:
         return {"error":"please login"}, 401
 

@@ -39,7 +39,7 @@ function AccountPreferences(){
         const name = event.target.name
         const value = event.target.value
             setFormData((prevData) => ({
-                ...prevData, [name]:value,
+                ...prevData, [name]:[value],
             }))
     }
 
@@ -48,7 +48,7 @@ function AccountPreferences(){
         const minval = event.minValue
         const maxval = event.maxValue
         setFormData((prevData) => ({
-            ...prevData, [name]:minval, [name]: maxval,
+            ...prevData, [name]: [minval, maxval],
         }))
     }
 

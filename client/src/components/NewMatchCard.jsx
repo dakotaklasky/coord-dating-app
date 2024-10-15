@@ -12,6 +12,7 @@ function NewMatchCard(){
 
     const [user, setUser] = useState([])
     const [userAttributeDict, setUserAttributeDict] = useState([])
+    const [isToggled, setToggle] = useState(false)
 
     useEffect(() =>{
         fetch("http://127.0.0.1:5555/new_match",{
@@ -166,7 +167,13 @@ function NewMatchCard(){
         return String(age);
       }
 
+      function handleToggle(){
+        setToggle(!isToggled)
+    }
+
     return(
+        <div>
+        <button onClick={handleToggle}>{isToggled ? 'Date Matching ON' : 'Date Matching OFF' }</button>
         <Card sx={{maxWidth: 800}}>
             <CardContent>
                 <img src={user.image} alt="User Profile Picture"/>
@@ -183,6 +190,7 @@ function NewMatchCard(){
                 <Button id="like" onClick = {handleLike}>❤️</Button>
             </CardActions>
         </Card>
+        </div>
     )
 }
 

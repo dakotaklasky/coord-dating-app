@@ -79,7 +79,7 @@ function PreferenceOptionForm({handleSubmit,handleInputChange,getDefaultValue,us
                         </div>
                     ))}
                 </div>
-                <input type="submit" value="Sign Up"></input>
+                <input type="submit" value="Update"></input>
             </form>
         </div>
 )}

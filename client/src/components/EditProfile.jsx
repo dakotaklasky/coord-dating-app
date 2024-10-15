@@ -6,43 +6,6 @@ function EditProfile(){
     const [formData, setFormData] = useState([])
     const [userInfo, setUserInfo] = useState(true)
 
-    // const fetch1 = fetch(`http://127.0.0.1:5555/myaccount`,{
-    //     method: "GET",
-    //     headers:{
-    //         "Content-Type": "application/json",
-    //         "Accept": 'application/json'
-    //     },
-    //     credentials: 'include'
-    // })
-    // const fetch2 =  fetch(`http://127.0.0.1:5555/user_attributes`,{
-    //     method: "GET",
-    //     headers:{
-    //         "Content-Type": "application/json",
-    //         "Accept": 'application/json'
-    //     },
-    //     credentials: 'include'
-    // })
-    
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try{
-    //             const [response1, response2] = await Promise.all([
-    //                 fetch1,fetch2
-    //             ])
-                
-    //             const data1 = await response1.clone().json()
-    //             const data2 = await response2.clone().json()
-    //             const combined = {...data1,...data2}
-
-    //             setFormData(combined)
-    //         }
-    //         catch (error){
-    //             console.error('Error fetching data:', error)
-    //         }
-    //     }
-    //     fetchData()
-    // }, [])
-
     useEffect(() =>{
         fetch("http://127.0.0.1:5555/myaccount",{
             method: "GET",
